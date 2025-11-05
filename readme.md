@@ -30,7 +30,9 @@ mysql -u *user* -p*userpassword* jukebox < storage/backups/englishdictionary.sql
 
 Run database migrate scripts - php artisan migrate
 
-Update database with existing data - storage/backups/mymusic.sql
+Update database with existing data - storage/backups/mymusic.sql  
+The songs location string uses the macOS-style directory separator.  This will need to be mass updated to run on a Windows device.
+This will be refactored and unnecessary in a future release.
 
 php artisan serve
 
