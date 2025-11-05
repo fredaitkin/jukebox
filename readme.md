@@ -34,4 +34,12 @@ Update database with existing data - storage/backups/mymusic.sql
 
 php artisan serve
 
+__Configuration changes will need to be made for this application to run successfully on different devices__  
+
+config/filesystems.php   
++ disks - partition - root - needs to be set to the location of the music directory on the device
++ media_directory - needs to be set to the name of the music directoy on the device
+
+.env  
++ LOCAL_PARTITION - needs to be set to the device partition
 
