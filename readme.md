@@ -14,6 +14,10 @@ Copy env.example to .env
 Run php artisan key:generate to populate the APP_KEY in the .env file.  
 Set DB credentials and other credentials in the .env file.
 
+The device type and location of the music directory may also need to be updated in the .env file  
++ LOCAL_PARTITION - will need to be set to the device type partition (see config/filesystems.php)
++ MEDIA_DIRECTORY - will need to be set to the location of the music folder from the root directory
+
 In order to run the Words command, external Word databases will need to be imported:
 I am currently using two different Word databases, both have words the other does not.
 
@@ -36,12 +40,4 @@ This will be refactored and unnecessary in a future release.
 
 php artisan serve
 
-__Configuration changes will need to be made for this application to run successfully on different devices__  
-
-config/filesystems.php   
-+ disks - partition - root - needs to be set to the location of the music directory on the device
-+ media_directory - needs to be set to the name of the music directoy on the device
-
-.env  
-+ LOCAL_PARTITION - needs to be set to the device partition
 
