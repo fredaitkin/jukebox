@@ -14,6 +14,10 @@ Copy env.example to .env
 Run php artisan key:generate to populate the APP_KEY in the .env file.  
 Set DB credentials and other credentials in the .env file.
 
+The device type and location of the music directory may also need to be updated in the .env file  
++ LOCAL_PARTITION - will need to be set to the device type partition (see config/filesystems.php)
++ MEDIA_DIRECTORY - will need to be set to the location of the music folder from the root directory
+
 In order to run the Words command, external Word databases will need to be imported:
 I am currently using two different Word databases, both have words the other does not.
 
@@ -30,7 +34,9 @@ mysql -u *user* -p*userpassword* jukebox < storage/backups/englishdictionary.sql
 
 Run database migrate scripts - php artisan migrate
 
-Update database with existing data - storage/backups/mymusic.sql
+Update database with existing data - storage/backups/mymusic.sql  
+The songs location string uses the macOS-style directory separator.  This will need to be mass updated to run on a Windows device.
+This will be refactored and unnecessary in a future release.
 
 php artisan serve
 
