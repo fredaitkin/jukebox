@@ -98,7 +98,7 @@ class SongResourceController extends Controller
     {
         $song = $this->song->get($id);
         $location = config('filesystems.media_directory') . $song->location;
-        if (Storage::disk(config('filesystems.partition'))->has($location)):
+        if (Storage::disk(config('filesystems.partition'))->fileExists($location)):
             $song->last_played = date("Y-m-d");
             $song->played += 1;
             $song->update();
