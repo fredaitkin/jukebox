@@ -1,0 +1,13 @@
+--- /dev/null
++++ ../Mobile_Detect.php
+@@ -886,8 +886,8 @@
+      *                          from the $headers array instead.
+      */
+     public function __construct(
+-        array $headers = null,
+-        $userAgent = null
++        ?array $headers = null,
++        ?string $userAgent = null
+     ) {
+         $this->setHttpHeaders($headers);
+         $this->setUserAgent($userAgent);
