@@ -161,6 +161,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
+        Spatie\Html\HtmlServiceProvider::class,
 
     ],
 

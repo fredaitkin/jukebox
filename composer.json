@@ -9,20 +9,19 @@
     "type": "project",
     "require": {
         "php": "^8.4",
-        "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^7.4",
         "intervention/image": "^2.5",
         "james-heinrich/getid3": "^1.9",
         "jenssegers/agent": "^2.6",
-        "kyslik/column-sortable": "^6.0",
-        "laravel/framework": "^8.0",
+        "kyslik/column-sortable": "^7.0",
+        "laravel/framework": "^12.0",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^3.0",
-        "laravelcollective/html": "^6.4",
-        "league/flysystem": "1.1.4",
-        "nesbot/carbon": "^2.53",
+        "laravel/ui": "^4.0",
+        "spatie/laravel-html": "^3.12",
+        "league/flysystem": "^3.8.0",
+        "nesbot/carbon": "^3.8",
         "predis/predis": "^1.1",
-        "watson/rememberable": "^5.0"
+        "watson/rememberable": "^7.0"
     },
     "require-dev": {
         "codeception/codeception": "^5.0.8",
