@@ -1,6 +1,6 @@
-## Music Laravel
+## Jukebox
 
-"musiclaravel"  is my take on iTunes.
+"jukebox" is my take on iTunes.
 
 Displays songs and artists and lyrics, enables a user to create and play playlists.
 
