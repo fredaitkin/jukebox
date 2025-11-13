@@ -38,6 +38,21 @@ Update database with existing data - storage/backups/mymusic.sql
 The songs location string uses the macOS-style directory separator.  This will need to be mass updated to run on a Windows device.
 This will be refactored and unnecessary in a future release.
 
-php artisan serve
+php artisan serve  
 
+__Testing__
+
+This application is using Codeception for testing. 
+A WebDriver needs to be setup up for the tests to run - https://codeception.com/docs/modules/WebDriver
+
+Copy .env to *.env.testing*  
+Add the following properties to enable the test suite to log into the application  
++ TEST_EMAIL
++ TEST_PW
+
+I am using the local ChromeDriver approach.   
+Running *chromedriver --url-base=/wd/hub*  
+The WebDriver port in acceptance.suite.yml needs to be set to the port the chromedriver is running    
+Then running the tests *php vendor/bin/codecept run acceptance*  
+A single test can be run with *php vendor/bin/codecept run acceptance SongsCest:tryViewSongEditPage*  
 

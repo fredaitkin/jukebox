@@ -15,17 +15,17 @@ class SongsCest
 
     public function tryViewSongEditPage(AcceptanceTester $I)
     {
-    	$I->login($I);
-		$I->amOnPage('/songs');
-		$I->click('edit');
-		$I->see('Composer');
+        $I->login($I);
+        $I->amOnPage('/songs');
+        $I->click('a[name="title"]');
+        $I->see('Composer');
 	}
 
     public function tryPlayAlbumSongs(AcceptanceTester $I)
     {
         $I->login($I);
         $I->amOnPage('/songs');
-        $I->click('play album');
+        $I->click('span[name="play_album"]');
         $I->wait(1);
         $I->seeElement('audio');
     }
@@ -34,8 +34,8 @@ class SongsCest
     {
         $I->login($I);
         $I->amOnPage('/songs');
-        $I->click('add to playlist');
+        $I->click('span[name="playlist"]');
         $I->wait(1);
-        $I->see('Add to Existing Playlist');
+        $I->see('Existing Playlist');
     }
 }
