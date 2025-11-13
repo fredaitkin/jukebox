@@ -9,7 +9,7 @@
 
 namespace App\Console\Commands;
 
-use App\Music\Client\Client as Client;
+use App\Client\Client as Client;
 use Exception;
 use Illuminate\Console\Command;
 
