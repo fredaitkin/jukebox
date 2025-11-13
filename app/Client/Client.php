@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Music\Client;
+namespace App\Client;
 
 use Illuminate\Database\Eloquent\Model;
 

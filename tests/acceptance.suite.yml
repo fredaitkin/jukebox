@@ -8,7 +8,8 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: http://mymusic
+            url: http://127.0.0.1:8000/
             browser: chrome
+            port: 64338
         - \Helper\Acceptance
     step_decorators: ~        
