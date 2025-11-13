@@ -8,8 +8,7 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: http://127.0.0.1:8000/
             browser: chrome
-            port: 64338
-        - Tests\Support\Helper\Acceptance
-    step_decorators: ~        
+            url: 'http://127.0.0.1/'
+            window_size: 2000x1000
+            port: 53762
