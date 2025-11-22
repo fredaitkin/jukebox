@@ -104,7 +104,9 @@ class ArtistModel extends Model
      * @return array
      */
     public function getAllSongsAttribute() {
-        return $this->songs->merge($this->compilation_songs);
+        // @todo find a way using eloquent to retrieve compilation songs.
+        return $this->songs;
+        // return $this->songs->merge($this->compilation_songs);
     }
 
 }

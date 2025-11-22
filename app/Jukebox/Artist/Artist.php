@@ -3,6 +3,9 @@
 namespace App\Jukebox\Artist;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+
 use Storage;
 
 class Artist implements ArtistInterface
@@ -47,7 +50,8 @@ class Artist implements ArtistInterface
 
         if (isset($constraints['id']) && isset($constraints['songs'])):
             $artists = $query->where('id', $constraints['id'])->get();
-            return $artists[0]->all_songs;
+            $compilations = DB::table('songs')->where('notes', 'Artist=' . $constraints['artist'])->get();
+            return array_merge($artists[0]->all_songs->all(), $compilations->all());
         endif;
         if (isset($constraints['artist'])):
             $query->where('artist', $constraints['artist']);
