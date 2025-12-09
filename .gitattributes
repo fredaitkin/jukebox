@@ -4,3 +4,5 @@
 *.js linguist-vendored
 *.sql linguist-vendored
 CHANGELOG.md export-ignore
+*.xml eol=lf
+*.lock eol=lf

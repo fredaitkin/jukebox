@@ -4,7 +4,7 @@
  * BackupDatabase.php
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Console\Commands;
@@ -59,7 +59,6 @@ class BackupDatabase extends Command
     public function handle()
     {
         try {
-
             $options = $this->options();
 
             if (isset($options['no-stats-flag'])):

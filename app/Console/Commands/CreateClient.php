@@ -4,7 +4,7 @@
  * CreateClient.php
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Console\Commands;
@@ -18,7 +18,6 @@ use Illuminate\Console\Command;
  */
 class CreateClient extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -49,7 +48,7 @@ class CreateClient extends Command
      * @return mixed
      */
     public function handle()
-    {   
+    {
         $options = $this->options();
 
         if(isset($options['client'])):
@@ -107,7 +106,6 @@ class CreateClient extends Command
     public function createClient($client_name, $encrypted_token)
     {
         try {
-
             $client = [];
             $client['client'] = $client_name;
             $client['token'] = $encrypted_token;
@@ -115,10 +113,8 @@ class CreateClient extends Command
             Client::create($client);
 
             $this->info('The client has been created successfully.');
-
         } catch (Exception $e) {
             $this->error("{{$e}}");
         }
     }
-
 }

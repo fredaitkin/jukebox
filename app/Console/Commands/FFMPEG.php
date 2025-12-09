@@ -4,7 +4,7 @@
  * FFMPEG.php
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Console\Commands;
@@ -97,7 +97,6 @@ class FFMPEG extends Command
     public function handle()
     {
         try {
-
             $options = $this->options();
 
             // Do the ff tools exist?
@@ -142,7 +141,8 @@ class FFMPEG extends Command
                         if (strpos($file, '.mp4') !== false):
                             $this->info($file);
                             $new_file = str_replace('.mp4', '.mp3', $file);
-                            $command = 'ffmpeg -i "' . $options['dir'] . '/' . $file . '" "' . $options['dir'] . '/' . $new_file . '"';
+                            $command = 'ffmpeg -i "' . $options['dir'] . '/' . $file . '" "' . $options['dir'] . '/' .
+                                $new_file . '"';
                             exec($command);
                         endif;
                     endif;
@@ -164,7 +164,6 @@ class FFMPEG extends Command
             if ($options['probe']):
                 $this->getSongInformation();
             endif;
-
         } catch (Exception $e) {
             $this->error('The conversion process has been failed: ' . $e->getMessage());
         }
@@ -180,7 +179,7 @@ class FFMPEG extends Command
      *
      * @return void
      */
-    function processArtist($artist_name)
+    protected function processArtist($artist_name)
     {
         $artists = $this->artist->allByConstraints(['artist' => $artist_name]);
         if (count($artists) > 0):
@@ -217,7 +216,7 @@ class FFMPEG extends Command
      *
      * @return void
      */
-    function processAllArtists()
+    protected function processAllArtists()
     {
         $artists = $this->artist->allByConstraints();
         foreach($artists as $artist):
@@ -254,7 +253,7 @@ class FFMPEG extends Command
      *
      * @return void
      */
-    function getSongInformation()
+    protected function getSongInformation()
     {
         $songs = $this->song->allByConstraints(['composer_empty' => true]);
         foreach($songs as $song):
