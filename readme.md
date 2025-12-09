@@ -56,3 +56,11 @@ The WebDriver port in acceptance.suite.yml needs to be set to the port the chrom
 Then running the tests *php vendor/bin/codecept run acceptance*  
 A single test can be run with *php vendor/bin/codecept run acceptance SongsCest:tryViewSongEditPage*  
 
+__Code Style__
+
+This application is using PHP CodeSniffer for code style guidance
++ vendor/bin/phpcs - documents code style errors  
++ vendor/bin/phpcs -s - displays the rule name
++ vendor/bin/phpcs app/Client/Client.php - documents code style errors for a single file
++ vendor/bin/phpcbf - automatically fixes some code style errors
+

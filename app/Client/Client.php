@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-
     protected $table = 'clients';
 
     /**
@@ -57,5 +56,4 @@ class Client extends Model
      * @var array
      */
     protected $guarded = ['expires'];
-
 }

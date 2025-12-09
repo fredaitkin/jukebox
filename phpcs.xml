@@ -8,6 +8,11 @@
         <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
     </rule>
 
+    <rule ref="Squiz.ControlStructures.ControlSignature">
+        <exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis"/>
+        <exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword"/>
+    </rule>
+
     <file>app</file>
     <file>config</file>
     <file>database</file>

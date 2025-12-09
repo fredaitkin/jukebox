@@ -4,7 +4,7 @@
  * Words.php
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Console\Commands;
@@ -21,7 +21,6 @@ use Log;
  */
 class Words extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -119,7 +118,7 @@ class Words extends Command
 
     /**
      * Get word by formatted case and return type of word.
-     * 
+     *
      * @param string $word The word.
      *
      * @return array
@@ -336,7 +335,7 @@ class Words extends Command
      */
     private function getPersonName($word)
     {
-        //Ho Chi Minh, Chou En-Lai, Christina Applegate, Clarence Thomas, Santa Claus, Kurt Cobain, Leonard Cohen, John Coltrane, Perry Como, Billy Connolly, Sean Connery, Don Corleone etc
+        //Ho Chi Minh, Chou En-Lai, Christina Applegate, Clarence Thomas, Santa Claus, Kurt Cobain, Leonard Cohen etc
         if (isset(config('names')[$word])):
             return ['word' => config('names')[$word], 'type' => 'name'];
         else:
@@ -507,11 +506,9 @@ class Words extends Command
                 foreach ($words as $word):
                     $this->processWord($word, $song['id']);
                 endforeach;
-
             } catch (Exception $e) {
                 Log::info($e->getMessage());
             }
-
         endforeach;
 
         Log::info('Storing Words');
@@ -527,10 +524,10 @@ class Words extends Command
 
     /**
      * Process the word and populate the word cloud.
-     * 
+     *
      * @param string $word The word.
      * @param int    $id   The song id.
-     * 
+     *
      * @return void
      */
     private function processWord($word, $id)
@@ -595,7 +592,6 @@ class Words extends Command
                 $w['song_ids'] = array_unique($w['song_ids']);
 
                 $this->wordCloud->dynamicStore($w);
-
             } catch (Exception $e) {
                 Log::error($e->getMessage());
             }
@@ -626,5 +622,4 @@ class Words extends Command
             Log::info($v);
         endforeach;
     }
-
 }
