@@ -4,7 +4,7 @@
  * Controller to handle standard REST requests for songs
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Http\Controllers;
