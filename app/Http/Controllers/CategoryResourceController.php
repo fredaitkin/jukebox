@@ -4,7 +4,7 @@
  * Controller for category requests
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Http\Controllers;

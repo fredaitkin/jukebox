@@ -4,7 +4,7 @@
  * LyricDataFix.php
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Console\Commands;

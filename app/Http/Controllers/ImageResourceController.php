@@ -4,7 +4,7 @@
  * Controller to handle image requests
  *
  * @package Jukebox
- * @author  Melissa Aitkin
+ * @author  Fred Aitkin
  */
 
 namespace App\Http\Controllers;
