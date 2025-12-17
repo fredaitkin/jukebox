@@ -236,7 +236,7 @@ function display_jukebox(title, songs, device_type) {
   jukebox_form += '<figure>';
   jukebox_form += '<audio controls src="' + song_url + songs[0].id + '">Your browser does not support the<code>audio</code> element.</audio>';
   jukebox_form += '</figure>';
-  jukebox_form += '<button class="previous btn-jukebox">Previous</button><button class="next btn-jukebox">Next</button><button class="restart btn-jukebox">Restart</button>';
+  jukebox_form += '<button class="previous btn-jukebox">Previous</button><button class="next btn-jukebox">Next</button><button class="restart btn-jukebox">Restart</button><button class="album btn-jukebox">Album</button>';
 
   jukebox_form += '<div id=div-jukebox>';
   for (i = 0; i < songs.length; i++) {
@@ -283,6 +283,7 @@ function display_jukebox(title, songs, device_type) {
       let next = $(this).find('button.next').get(0);
       let previous = $(this).find('button.previous').get(0);
       let restart = $(this).find('button.restart').get(0);
+      let album = $(this).find('button.album').get(0);
 
       audio.addEventListener('ended',function(e) {
         idx += 1;
@@ -302,6 +303,11 @@ function display_jukebox(title, songs, device_type) {
       restart.addEventListener('click', function(e) {
         idx = 0;
         previous_id = next_song(e, audio, previous_id, idx);
+      });
+
+      album.addEventListener('click', function(e) {
+        play_album(previous_id, device_type);
+        $('button.ui-dialog-titlebar-close').trigger('click');
       });
 
       if (songs.length == 0) {
@@ -348,11 +354,11 @@ function display_jukebox(title, songs, device_type) {
           return previous_id;
         } else {
            $('button.next').disabled = true;
-        }
+        } 
       }
 
-      $("#div-jukebox").click(function() {
-        $('button.next').click();
+      $("#div-jukebox").on('click', function() {
+        $('button.next').trigger('click');
       });
 
     }
@@ -360,3 +366,22 @@ function display_jukebox(title, songs, device_type) {
   });
 }
 
+function play_album(song_id, device_type) {
+  var url = APP_URL + '/songs?id=' + song_id + '&album=true';
+
+  fetch(url)
+    .then(
+        function(response) {
+          if (response.status !== 200) {
+            console.log('Looks like there was a problem. Status Code: ' + response.status);
+            return;
+          }
+          response.json().then(function(data) {
+            display_jukebox(data[0].album, data, device_type);
+          });
+        }
+    )
+    .catch(function(err) {
+        console.log('Fetch Error: ', err);
+  });
+}
