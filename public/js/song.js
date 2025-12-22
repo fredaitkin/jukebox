@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(function() {
 
   var device_type = $("meta[name='device-type']").attr("content");
 
@@ -29,7 +29,7 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='shuffle_songs']").click(function() {
+  $("a[name='shuffle_songs']").on('click', function() {
     var url = '/songs?all';
 
     fetch(url)
@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   });
 
-  $("span[name='play_album']").click(function() {
+  $("span[name='play_album']").on('click', function() {
     let song_id = $(this).attr('id');
     song_id = song_id.replace("play-album-", "");
 
@@ -75,7 +75,7 @@ $(document).ready(function() {
 
   });
 
-  $("span[name='play']").click(function() {
+  $("span[name='play']").on('click', function() {
     let song_id = $(this).attr('id');
     song_id = song_id.replace("play-", "");
 
@@ -98,7 +98,7 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='play_genre']").click(function() {
+  $("a[name='play_genre']").on('click', function() {
     let genre = $(this).parent().prev('td').find('div').text();
 
     let url = '/songs?genre=' + encodeURIComponent(genre);
@@ -158,12 +158,12 @@ $(document).ready(function() {
 
   });
 
-  $("button[name='reset']").click(function() {
+  $("button[name='reset']").on(function() {
     $(this).parent().parent().find('input').val('');
     $(this).parent().parent().find('input').focus();
   });
 
-  $("#shuffle").click(function() {
+  $("#shuffle").on('click', function() {
     var url = '/songs?all&do_not_play=true';
 
     fetch(url)
@@ -186,7 +186,7 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='title']").mousedown(function(event) {
+  $("a[name='title']").on('mousedown', function(event) {
     switch (event.which) {
       case 3:
         var title = $(this).text();
