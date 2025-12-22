@@ -1,7 +1,8 @@
 ## Jukebox
 
-"jukebox" is my take on iTunes.
+"jukebox" is my take on Spotify & iTunes.
 
+Loads artist, album and song information from a device into the application's database.
 Displays songs and artists and lyrics, enables a user to create and play playlists.
 
 This predicates you have composer.
