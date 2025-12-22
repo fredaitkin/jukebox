@@ -222,6 +222,7 @@ function shuffle(array) {
   return array;
 }
 
+// export function display_jukebox(title, songs, device_type) {
 function display_jukebox(title, songs, device_type) {
   let song_url = '/song/play/';
   let jukebox_form = '<div class="audio">';

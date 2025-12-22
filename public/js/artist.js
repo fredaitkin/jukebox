@@ -1,11 +1,15 @@
-$(document).ready(function() {
+
+// @todo: Look at import export architecture.
+// import { display_jukebox } from './song.js';
+
+$(function() {
 
   $("input[name='play_songs']").click(function() {
     let artist_id = $(this).attr('id');
     let id = artist_id.replace("play-songs-", "");
     let artist = $(this).closest('tr').find('div[name="artist_name"]').text();
 
-    let url = APP_URL + '/artists?id=' + id + '&artist=' + artist + '&songs=true';
+    let url = '/artists?id=' + id + '&artist=' + artist + '&songs=true';
 
     fetch(url)
       .then(
