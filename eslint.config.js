@@ -19,6 +19,8 @@ export default [
       globals: {
         ...globals.browser, // Includes window, document, etc.
         ...globals.jquery,  // Specifically defines $ and jQuery
+        display_jukebox: "readonly",
+        shuffle: "readonly",
       },
     },
     // 4. Integrate the jQuery plugin for specialized rules

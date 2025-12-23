@@ -12,7 +12,6 @@ $(function() {
             return;
           }
           response.json().then(function(data) {
-            // @todo: shuffle and display_jukebox functions should be imported from song.js
             var songs = shuffle(Object.values(JSON.parse(data[0].playlist)));
             display_jukebox($(this).attr('playlist'), songs);
           });
