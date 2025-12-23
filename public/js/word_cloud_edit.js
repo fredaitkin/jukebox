@@ -1,6 +1,6 @@
-$(document).ready(function() {
+$(function() {
 
-  $("#capitalize").click(function() {
+  $("#capitalize").on('click', function() {
     $("#word").val($("#word").val()[0].toUpperCase() + $("#word").val().slice(1));
   });
 

@@ -1,11 +1,11 @@
-$(document).ready(function() {
+$(function() {
 
   var device_type = $("meta[name='device-type']").attr("content");
 
-  $("input[name='songs']").click(function() {
+  $("input[name='songs']").on('click', function() {
     let word_id = $(this).attr('id');
     word_id = word_id.replace("songs-", "");
-    var url = APP_URL + '/word-cloud?songs=true&id=' + word_id;
+    var url = '/word-cloud?songs=true&id=' + word_id;
 
     fetch(url)
       .then(
@@ -30,7 +30,7 @@ $(document).ready(function() {
 function display_song_form(data, device_type) {
   let form = '<div>';
   $.each(data, function(i, song) {
-    title = (song.song.length > 20) ? song.song.substr(0, 20) + '...' : song.song; 
+    let title = (song.song.length > 20) ? song.song.substr(0, 20) + '...' : song.song; 
     form += '<div>' +
       '<div style="width:50%;float:left" id="' + song.id + '" song="' + song.song + '" class="song"><a class="songs" href="#">' + title + '</a></div>' +
       '<div style="width:50%;float:left">' + song.artist + '</div>' +
@@ -42,7 +42,7 @@ function display_song_form(data, device_type) {
   $(form).dialog({
     title: 'Songs',
     close: function() {
-      $(this).remove()
+      $(this).remove();
     },
     modal: false,
     width: device_type == 'desktop' ? 700 : 330,
@@ -51,7 +51,7 @@ function display_song_form(data, device_type) {
     }
   });
 
-  $('.song').click(function() {
+  $('.song').on('click', function() {
       var modal_div = 'modal-' + $(this).attr('id');
       $('#' + modal_div).dialog({
         modal : true ,

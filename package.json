@@ -1,5 +1,6 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "development": "mix",
         "watch": "mix watch",
@@ -8,9 +9,12 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "axios": "^0.21.4",
+        "axios": "^1.13.2",
         "bootstrap": "^4.6.1",
         "cross-env": "^5.1",
+        "eslint": "^9.39.2",
+        "eslint-plugin-jquery": "^1.5.1",
+        "globals": "^16.5.0",
         "jquery": "^3.6.0",
         "jquery-ui": "^1.13.2",
         "laravel-mix": "^6.0.43",
@@ -21,8 +25,8 @@
         "sass": "^1.50.1",
         "sass-loader": "^8.0.2",
         "selenium-standalone": "^6.24.0",
-        "vue": "^2.6.14",
-        "vue-template-compiler": "^2.6.14"
+        "vue": "^3.5.26",
+        "vue-template-compiler": "^0.1.0"
     },
     "dependencies": {
         "font-awesome": "^4.7.0",

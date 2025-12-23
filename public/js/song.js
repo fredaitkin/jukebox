@@ -1,10 +1,10 @@
-$(document).ready(function() {
+$(function() {
 
   var device_type = $("meta[name='device-type']").attr("content");
 
   $("#album").change(function() {
 
-    var url = APP_URL + '/songs?album=' + encodeURIComponent($('#album').val());
+    var url = '/songs?album=' + encodeURIComponent($('#album').val());
 
     fetch(url)
       .then(
@@ -29,8 +29,8 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='shuffle_songs']").click(function() {
-    var url = APP_URL + '/songs?all';
+  $("a[name='shuffle_songs']").on('click', function() {
+    var url = '/songs?all';
 
     fetch(url)
       .then(
@@ -51,11 +51,11 @@ $(document).ready(function() {
 
   });
 
-  $("span[name='play_album']").click(function() {
+  $("span[name='play_album']").on('click', function() {
     let song_id = $(this).attr('id');
     song_id = song_id.replace("play-album-", "");
 
-    var url = APP_URL + '/songs?id=' + song_id + '&album=true';
+    var url = '/songs?id=' + song_id + '&album=true';
 
     fetch(url)
       .then(
@@ -75,11 +75,11 @@ $(document).ready(function() {
 
   });
 
-  $("span[name='play']").click(function() {
+  $("span[name='play']").on('click', function() {
     let song_id = $(this).attr('id');
     song_id = song_id.replace("play-", "");
 
-    var url = APP_URL + '/songs?id=' + song_id;
+    var url = '/songs?id=' + song_id;
     fetch(url)
       .then(
         function(response) {
@@ -98,10 +98,10 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='play_genre']").click(function() {
+  $("a[name='play_genre']").on('click', function() {
     let genre = $(this).parent().prev('td').find('div').text();
 
-    let url = APP_URL + '/songs?genre=' + encodeURIComponent(genre);
+    let url = '/songs?genre=' + encodeURIComponent(genre);
 
     fetch(url)
       .then(
@@ -139,7 +139,7 @@ $(document).ready(function() {
                 if (songs.length == 0) {
                   alert('No missing lyrics');
                 } else {
-                  for (i = 0; i < songs.length; i++) {
+                  for (let i = 0; i < songs.length; i++) {
                     var search = $("#artist").val() + ' ' + songs[i].title + ' lyrics';
                     window.open("https://www.google.com/search?q=" + encodeURIComponent(search), '_blank');
                     window.open("songs?lyrics=true & id=" + songs[i].id);
@@ -158,13 +158,13 @@ $(document).ready(function() {
 
   });
 
-  $("button[name='reset']").click(function() {
+  $("button[name='reset']").on(function() {
     $(this).parent().parent().find('input').val('');
     $(this).parent().parent().find('input').focus();
   });
 
-  $("#shuffle").click(function() {
-    var url = APP_URL + '/songs?all&do_not_play=true';
+  $("#shuffle").on('click', function() {
+    var url = '/songs?all&do_not_play=true';
 
     fetch(url)
       .then(
@@ -186,18 +186,18 @@ $(document).ready(function() {
 
   });
 
-  $("a[name='title']").mousedown(function(event) {
+  $("a[name='title']").on('mousedown', function(event) {
     switch (event.which) {
       case 3:
         var title = $(this).text();
         var artist  = $(this).parent().next().find('a').text();
-        url ='http://www.google.com/search?q=' + artist + ' ' + title + ' wikipedia';
+        var url ='http://www.google.com/search?q=' + artist + ' ' + title + ' wikipedia';
         window.open(url, title, 'toolbars=0,width=1200,height=800');
-        window.location.href = APP_URL + $(this).attr('href');
+        window.location.href = $(this).attr('href');
         break;
 
       default:
-        window.location.href = APP_URL + $(this).attr('href');
+        window.location.href = $(this).attr('href');
     }
 
   });
@@ -222,16 +222,8 @@ function shuffle(array) {
   return array;
 }
 
-function get_lyrics(song) {
-  lyrics = song.lyrics;
-  if (lyrics === undefined || lyrics == 'unavailable') {
-    lyrics = 'No lyrics set...';
-  }
-  return lyrics;
-}
-
 function display_jukebox(title, songs, device_type) {
-  let song_url = APP_URL + '/song/play/';
+  let song_url = '/song/play/';
   let jukebox_form = '<div class="audio">';
   jukebox_form += '<figure>';
   jukebox_form += '<audio controls src="' + song_url + songs[0].id + '">Your browser does not support the<code>audio</code> element.</audio>';
@@ -239,7 +231,7 @@ function display_jukebox(title, songs, device_type) {
   jukebox_form += '<button class="previous btn-jukebox">Previous</button><button class="next btn-jukebox">Next</button><button class="restart btn-jukebox">Restart</button><button class="album btn-jukebox">Album</button>';
 
   jukebox_form += '<div id=div-jukebox>';
-  for (i = 0; i < songs.length; i++) {
+  for (let i = 0; i < songs.length; i++) {
     var artist = '';
       if (songs[i].artists) {
         artist = songs[i].artists[0].artist;
@@ -247,7 +239,7 @@ function display_jukebox(title, songs, device_type) {
           if (songs[i].notes.indexOf('Artist=') > -1) {
             artist = songs[i].notes;
             artist = artist.replace('Artist=', '');
-            idx = artist.indexOf(';');
+            var idx = artist.indexOf(';');
             if (idx > -1) {
               artist = artist.substring(0,idx);
             }
@@ -263,7 +255,7 @@ function display_jukebox(title, songs, device_type) {
   $(jukebox_form).dialog({
     title: title,
     close: function() {
-      $(this).remove()
+      $(this).remove();
     },
     modal: false,
     width: device_type == 'desktop' ? 500 : 330,
@@ -272,7 +264,7 @@ function display_jukebox(title, songs, device_type) {
       $('div.ui-dialog').addClass('ui-dialog-jukebox');
 
       var idx = 0;
-      song = songs[0];
+      var song = songs[0];
 
       // Add css styling
       let previous_id = song.id;
@@ -305,7 +297,7 @@ function display_jukebox(title, songs, device_type) {
         previous_id = next_song(e, audio, previous_id, idx);
       });
 
-      album.addEventListener('click', function(e) {
+      album.addEventListener('click', function() {
         play_album(previous_id, device_type);
         $('button.ui-dialog-titlebar-close').trigger('click');
       });
@@ -329,7 +321,7 @@ function display_jukebox(title, songs, device_type) {
         var playPromise = audio.play();
           playPromise.then(function() {
             // Automatic playback started!
-          }).catch(function(error) {
+          }).catch(function() {
             if (event.target.className == 'previous btn-jukebox') {
               $('button.previous').click();
             } else {
@@ -367,7 +359,7 @@ function display_jukebox(title, songs, device_type) {
 }
 
 function play_album(song_id, device_type) {
-  var url = APP_URL + '/songs?id=' + song_id + '&album=true';
+  var url ='/songs?id=' + song_id + '&album=true';
 
   fetch(url)
     .then(

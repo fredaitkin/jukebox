@@ -1,8 +1,8 @@
-$(document).ready(function() {
+$(function() {
 
-  $("a[name='play']").click(function() {
+  $("a[name='play']").on('click', function() {
 
-    let url = APP_URL + '/playlists?playlist=' + encodeURIComponent($(this).attr('playlist'));
+    let url = '/playlists?playlist=' + encodeURIComponent($(this).attr('playlist'));
 
     fetch(url)
       .then(
@@ -23,13 +23,13 @@ $(document).ready(function() {
 
   });
 
-  $("span[name='playlist']").click(function() {
+  $("span[name='playlist']").on('click', function() {
 
     let song_id = $(this).attr('id');
     song_id = song_id.replace("playlist-", "");
     let song_title = $(this).attr('data-title');
 
-    var url = APP_URL + '/playlists?all=true&notIn=' + song_id;
+    var url = '/playlists?all=true&notIn=' + song_id;
 
     fetch(url)
       .then(
@@ -74,7 +74,7 @@ function display_playlist_form(song_id, song_title, playlists) {
   playlist_form += '<input type="hidden" id="song_title" value="' + song_title + '"/>';
   playlist_form += '</div>';
 
-  var url = APP_URL + '/playlists';
+  var url = '/playlists';
 
   $(playlist_form).dialog({
     title: 'Playlists',
@@ -130,5 +130,5 @@ function display_playlist_form(song_id, song_title, playlists) {
             $(this).dialog("destroy").remove();
         }
       }
-  })
+  });
 }

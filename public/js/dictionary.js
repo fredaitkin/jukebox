@@ -1,9 +1,9 @@
-$(document).ready(function() {
+$(function() {
 
-  $("input[name='dictionary']").click(function() {
+  $("input[name='dictionary']").on('click', function() {
     let word = $(this).attr('id');
     word = word.replace("dictionary-", "");
-    var url = APP_URL + '/dictionary?word=' + word;
+    var url = '/dictionary?word=' + word;
 
     fetch(url)
       .then(
@@ -36,7 +36,7 @@ function display_dictionary_form(word, data) {
   $(form).dialog({
     title: word,
     close: function() {
-      $(this).remove()
+      $(this).remove();
     },
     modal: false,
     width: "85%",
