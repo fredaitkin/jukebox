@@ -176,7 +176,7 @@ $(function() {
           }
           response.json().then(function(data) {
             var songs = shuffle(data);
-            display_jukebox("EVERYBODY SHUFFLIN...", songs, device_type);
+            display_jukebox("EVERYBODY SHUFFLIN...", songs, device_type, true);
           });
         }
       )
@@ -222,7 +222,7 @@ function shuffle(array) {
   return array;
 }
 
-function display_jukebox(title, songs, device_type) {
+function display_jukebox(title, songs, device_type, display_album_button=false) {
   let song_url = '/song/play/';
   let jukebox_form = '<div class="audio">';
   jukebox_form += '<figure>';
@@ -301,6 +301,10 @@ function display_jukebox(title, songs, device_type) {
         play_album(previous_id, device_type);
         $('button.ui-dialog-titlebar-close').trigger('click');
       });
+
+      if (!display_album_button) {
+        $('button.album').hide();
+      }
 
       if (songs.length == 0) {
         $('button.next').hide();
