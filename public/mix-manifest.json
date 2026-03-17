@@ -1,4 +1,16 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/artist-react-page.js": "/js/artist-react-page.js",
+    "/css/app.css": "/css/app.css",
+    "/fonts/vendor/font-awesome/fontawesome-webfont.eot?8b43027f47b20503057dfbbaa9401fef": "/fonts/vendor/font-awesome/fontawesome-webfont.eot?8b43027f47b20503057dfbbaa9401fef",
+    "/fonts/vendor/font-awesome/fontawesome-webfont.woff2?20fd1704ea223900efa9fd4e869efb08": "/fonts/vendor/font-awesome/fontawesome-webfont.woff2?20fd1704ea223900efa9fd4e869efb08",
+    "/fonts/vendor/font-awesome/fontawesome-webfont.woff?f691f37e57f04c152e2315ab7dbad881": "/fonts/vendor/font-awesome/fontawesome-webfont.woff?f691f37e57f04c152e2315ab7dbad881",
+    "/fonts/vendor/font-awesome/fontawesome-webfont.ttf?1e59d2330b4c6deb84b340635ed36249": "/fonts/vendor/font-awesome/fontawesome-webfont.ttf?1e59d2330b4c6deb84b340635ed36249",
+    "/fonts/vendor/font-awesome/fontawesome-webfont.svg?c1e38fd9e0e74ba58f7a2b77ef29fdd3": "/fonts/vendor/font-awesome/fontawesome-webfont.svg?c1e38fd9e0e74ba58f7a2b77ef29fdd3",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_444444_256x240.png?d1b818587c3bc65058fe43800e4a191c": "/images/vendor/jquery-ui/themes/base/ui-icons_444444_256x240.png?d1b818587c3bc65058fe43800e4a191c",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_555555_256x240.png?35d57320d9df28ec0d0d8bd1b5c75983": "/images/vendor/jquery-ui/themes/base/ui-icons_555555_256x240.png?35d57320d9df28ec0d0d8bd1b5c75983",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_ffffff_256x240.png?92bef7e45fed3caba8dc9348edef4df2": "/images/vendor/jquery-ui/themes/base/ui-icons_ffffff_256x240.png?92bef7e45fed3caba8dc9348edef4df2",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_777620_256x240.png?f423048bf942a7a33b33b1b982ecdb51": "/images/vendor/jquery-ui/themes/base/ui-icons_777620_256x240.png?f423048bf942a7a33b33b1b982ecdb51",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_cc0000_256x240.png?5cbbd560bcf30acb95dd3b0b0d61645a": "/images/vendor/jquery-ui/themes/base/ui-icons_cc0000_256x240.png?5cbbd560bcf30acb95dd3b0b0d61645a",
+    "/images/vendor/jquery-ui/themes/base/ui-icons_777777_256x240.png?f5d5fce2f36b5776eab8b314efc2dfd8": "/images/vendor/jquery-ui/themes/base/ui-icons_777777_256x240.png?f5d5fce2f36b5776eab8b314efc2dfd8"
 }

@@ -1,4 +1,6 @@
-let mix = require('laravel-mix');
+import laravelMix from 'laravel-mix';
+
+const mix = laravelMix.default ?? laravelMix;
 
 /*
  |--------------------------------------------------------------------------
@@ -12,5 +14,6 @@ let mix = require('laravel-mix');
  */
 
 mix.js('resources/assets/js/app.js', 'public/js')
+   .js('resources/assets/js/artist-react-page.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
    .sourceMaps();
