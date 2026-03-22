@@ -12,6 +12,15 @@ const JUKEBOX_CONFIG = {
 const RIGHT_CLICK = 3;
 const MAX_LYRICS_WINDOWS = 3;
 
+function isMobileAudioDebugEnabled(deviceType) {
+  if (deviceType === 'desktop') {
+    return false;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return params.get('debug_audio') === '1';
+}
+
 /**
  * Utility function to fetch data with error handling
  */
@@ -252,6 +261,9 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
   let currentIndex = 0;
   let previousSongId = songs[0].id;
+  let songAdvanced = false;
+  let audioEndCheckIntervalId = null;
+  const debugAudio = isMobileAudioDebugEnabled(deviceType);
 
   const $dialog = $(dialogElement);
   const $audio = $dialog.find('audio')[0];
@@ -264,8 +276,95 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
   $(`#song-${previousSongId}`).addClass('font-weight-bold');
   $("span.ui-dialog-title").html(escapeHtml(songs[0].title));
 
-  // Event listeners
-  $audio.addEventListener('ended', () => handleSongChange(1));
+  function logAudioDebug(message, details = {}) {
+    if (!debugAudio) {
+      return;
+    }
+
+    console.log('[jukebox-audio-debug]', message, {
+      currentIndex,
+      songId: previousSongId,
+      currentTime: $audio?.currentTime,
+      duration: $audio?.duration,
+      ended: $audio?.ended,
+      paused: $audio?.paused,
+      visibilityState: document.visibilityState,
+      ...details,
+    });
+  }
+
+  // Some mobile browsers can miss `ended` while the device is locked/backgrounded.
+  // These fallbacks ensure we still advance when playback reaches the end.
+  const advanceToNextSong = (source = 'unknown') => {
+    if (songAdvanced) {
+      logAudioDebug('advance-blocked-song-already-advanced', { source });
+      return;
+    }
+    logAudioDebug('advance-to-next-song', { source });
+    songAdvanced = true;
+    handleSongChange(1);
+  };
+
+  function hasTrackReachedEnd() {
+    if (!$audio || !Number.isFinite($audio.duration) || $audio.duration <= 0) {
+      return false;
+    }
+
+    return $audio.ended || ($audio.currentTime >= ($audio.duration - 0.35));
+  }
+
+  function resetEndDetection() {
+    songAdvanced = false;
+    logAudioDebug('reset-end-detection');
+  }
+
+  function checkTrackEnd(source = 'check') {
+    if (hasTrackReachedEnd()) {
+      advanceToNextSong(source);
+    }
+  }
+
+  $audio.addEventListener('ended', () => advanceToNextSong('ended'));
+  $audio.addEventListener('pause', () => {
+    logAudioDebug('pause-event');
+    if (hasTrackReachedEnd()) {
+      advanceToNextSong('pause');
+    }
+  });
+  $audio.addEventListener('timeupdate', () => checkTrackEnd('timeupdate'));
+
+  const onVisibilityChange = () => {
+    logAudioDebug('visibilitychange-event');
+    checkTrackEnd('visibilitychange');
+  };
+
+  const onWindowFocus = () => {
+    logAudioDebug('focus-event');
+    checkTrackEnd('focus');
+  };
+
+  const onPageShow = () => {
+    logAudioDebug('pageshow-event');
+    checkTrackEnd('pageshow');
+  };
+
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  window.addEventListener('focus', onWindowFocus);
+  window.addEventListener('pageshow', onPageShow);
+
+  audioEndCheckIntervalId = window.setInterval(() => checkTrackEnd('interval'), 1000);
+
+  $dialog.on('dialogclose', () => {
+    if (audioEndCheckIntervalId !== null) {
+      clearInterval(audioEndCheckIntervalId);
+    }
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('focus', onWindowFocus);
+    window.removeEventListener('pageshow', onPageShow);
+    logAudioDebug('dialog-closed-cleanup');
+  });
+
+  // Button event listeners
   $prevBtn.addEventListener('click', () => handleSongChange(-1));
   $nextBtn.addEventListener('click', () => handleSongChange(1));
   $restartBtn.addEventListener('click', () => handleSongChange(-currentIndex));
@@ -322,6 +421,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
     $("span.ui-dialog-title").html(escapeHtml(song.title));
 
     // Reset and play
+    resetEndDetection();
     $audio.pause();
     $audio.load();
     playSong();
