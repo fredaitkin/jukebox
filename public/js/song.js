@@ -471,7 +471,9 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
     }
 
     $nextBtn.disabled = false;
+    const wasPlaying = !$audio.paused;
     $audio.src = songUrl + song.id;
+    $audio.autoplay = wasPlaying || document.visibilityState === 'hidden';
     
     // Update UI
     $(`#song-${previousSongId}`).removeClass('font-weight-bold');
@@ -481,8 +483,10 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
     // Reset and play
     resetEndDetection();
-    $audio.pause();
-    $audio.load();
+    if (document.visibilityState === 'hidden') {
+      // If playback continues while locked, retry on unlock if Android blocks this start.
+      pendingPlay = true;
+    }
     playSong();
   }
 
