@@ -310,7 +310,10 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
       return false;
     }
 
-    return $audio.ended || ($audio.currentTime >= ($audio.duration - 0.35));
+    // Do NOT use $audio.ended here — iOS sets it to true when the OS interrupts
+    // audio on lock, causing premature track advances mid-song. The position
+    // check is sufficient and immune to that false signal.
+    return $audio.currentTime >= ($audio.duration - 0.35);
   }
 
   function resetEndDetection() {
