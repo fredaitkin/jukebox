@@ -263,6 +263,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
   let previousSongId = songs[0].id;
   let songAdvanced = false;
   let audioEndCheckIntervalId = null;
+  let pendingPlay = false;
   const debugAudio = isMobileAudioDebugEnabled(deviceType);
 
   const $dialog = $(dialogElement);
@@ -318,6 +319,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
   function resetEndDetection() {
     songAdvanced = false;
+    pendingPlay = false;
     logAudioDebug('reset-end-detection');
   }
 
@@ -338,6 +340,11 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
   const onVisibilityChange = () => {
     logAudioDebug('visibilitychange-event');
+    if (document.visibilityState === 'visible' && pendingPlay) {
+      pendingPlay = false;
+      logAudioDebug('resuming-pending-play-on-unlock');
+      $audio.play().catch(() => {});
+    }
     checkTrackEnd('visibilitychange');
   };
 
@@ -446,11 +453,17 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
     const playPromise = $audio.play();
     if (playPromise) {
       playPromise.catch(() => {
-        // Autoplay prevented, move to next song
-        if (event?.target?.className === 'previous btn-jukebox') {
-          $prevBtn.click();
+        if (document.visibilityState === 'hidden') {
+          // Phone is locked — can't start playback now, resume when unlocked
+          pendingPlay = true;
+          logAudioDebug('play-deferred-until-unlock');
         } else {
-          $nextBtn.click();
+          // Autoplay blocked by browser policy, move to next song
+          if (event?.target?.className === 'previous btn-jukebox') {
+            $prevBtn.click();
+          } else {
+            $nextBtn.click();
+          }
         }
       });
     }
