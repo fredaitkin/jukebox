@@ -278,7 +278,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
   function logAudioDebug(message, details = {}) {
     if (!debugAudio) {
-      return;
+      // return;
     }
 
     console.log('[jukebox-audio-debug]', message, {
