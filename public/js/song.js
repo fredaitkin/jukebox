@@ -1,383 +1,518 @@
+// Configuration Constants
+const JUKEBOX_CONFIG = {
+  SONG_URL: '/song/play/',
+  API_BASE: '/songs',
+  SHUFFLE_TITLE: 'EVERYBODY SHUFFLIN...',
+  PLAY_ALBUM_PREFIX: 'play-album-',
+  PLAY_PREFIX: 'play-',
+  GOOGLE_SEARCH_URL: 'https://www.google.com/search',
+  WIKIPEDIA_SEARCH_URL: 'http://www.google.com/search',
+};
+
+const RIGHT_CLICK = 3;
+const MAX_LYRICS_WINDOWS = 3;
+
+function isMobileAudioDebugEnabled(deviceType) {
+  if (deviceType === 'desktop') {
+    return false;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return params.get('debug_audio') === '1';
+}
+
+/**
+ * Utility function to fetch data with error handling
+ */
+async function fetchSongs(params = {}) {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${JUKEBOX_CONFIG.API_BASE}?${queryString}` : JUKEBOX_CONFIG.API_BASE;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch songs:', error);
+    throw error;
+  }
+}
+
+/**
+ * Extract ID from element with prefix (e.g., "play-123" -> "123")
+ */
+function extractIdFromElement(element, prefix) {
+  const id = $(element).attr('id');
+  return id ? id.replace(prefix, '') : null;
+}
+
 $(function() {
+  const deviceType = $("meta[name='device-type']").attr("content");
 
-  var device_type = $("meta[name='device-type']").attr("content");
-
-  $("#album").change(function() {
-
-    var url = '/songs?album=' + encodeURIComponent($('#album').val());
-
-    fetch(url)
-      .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            var ol = '<ol id="songs" style="list-style-type:none">';
-            $.each(data, function(k, song) {
-              ol += '<li><a href="/song/' + song.id + '">' + song.title + '</a></li>';
-            });
-            ol += '</ol>';
-            $("#songs").replaceWith(ol);
-          });
-        }
-      )
-      .catch(function(err) {
-        console.log('Fetch Error: ', err);
-    });
-
+  // Album dropdown handler
+  $("#album").on('change', async function() {
+    try {
+      const data = await fetchSongs({ album: this.value });
+      let html = '<ol id="songs" style="list-style-type:none">';
+      data.forEach(song => {
+        html += `<li><a href="/song/${song.id}">${escapeHtml(song.title)}</a></li>`;
+      });
+      html += '</ol>';
+      $("#songs").replaceWith(html);
+    } catch (error) {
+      console.error('Error loading album songs:', error);
+    }
   });
 
-  $("a[name='shuffle_songs']").on('click', function() {
-    var url = '/songs?all';
-
-    fetch(url)
-      .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            var songs = shuffle(data);
-            display_jukebox("EVERYBODY SHUFFLIN...", songs, device_type);
-          });
-        }
-      )
-      .catch(function(err) {
-          console.log('Fetch Error: ', err);
-    });
-
+  // Shuffle all songs handler
+  $("a[name='shuffle_songs']").on('click', async function() {
+    try {
+      const data = await fetchSongs({ all: '' });
+      const shuffled = shuffle(data);
+      display_jukebox(JUKEBOX_CONFIG.SHUFFLE_TITLE, shuffled, deviceType);
+    } catch (error) {
+      console.error('Error shuffling songs:', error);
+    }
   });
 
-  $("span[name='play_album']").on('click', function() {
-    let song_id = $(this).attr('id');
-    song_id = song_id.replace("play-album-", "");
-
-    var url = '/songs?id=' + song_id + '&album=true';
-
-    fetch(url)
-      .then(
-          function(response) {
-            if (response.status !== 200) {
-              console.log('Looks like there was a problem. Status Code: ' + response.status);
-              return;
-            }
-            response.json().then(function(data) {
-              display_jukebox(data[0].album, data, device_type);
-            });
-          }
-      )
-      .catch(function(err) {
-          console.log('Fetch Error: ', err);
-    });
-
-  });
-
-  $("span[name='play']").on('click', function() {
-    let song_id = $(this).attr('id');
-    song_id = song_id.replace("play-", "");
-
-    var url = '/songs?id=' + song_id;
-    fetch(url)
-      .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            display_jukebox(data[0].album, data, device_type);
-          });
-        }
-      )
-      .catch(function(err) {
-        console.log('Fetch Error: ', err);
-    });
-
-  });
-
-  $("a[name='play_genre']").on('click', function() {
-    let genre = $(this).parent().prev('td').find('div').text();
-
-    let url = '/songs?genre=' + encodeURIComponent(genre);
-
-    fetch(url)
-      .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            display_jukebox(genre, data, device_type);
-          });
-        }
-      )
-      .catch(function(err) {
-        console.log('Fetch Error: ', err);
-    });
-
-  });
-
-  $("#get_lyrics").off().on("click", function() {
-      if ($("#artist").val().length > 0) {
-        let url = '/songs?artist=' + $("#artist").val() +
-          '&lyrics_empty=true' +
-          '&exact_match=' + $('#exact_match').is(':checked') +
-          '&exempt=' + $('#exempt').val();
-
-        fetch(url)
-          .then(
-            function(response) {
-              if (response.status !== 200) {
-                console.log('Looks like there was a problem. Status Code: ' + response.status);
-                return;
-              }
-              response.json().then(function(songs) {
-                if (songs.length == 0) {
-                  alert('No missing lyrics');
-                } else {
-                  for (let i = 0; i < songs.length; i++) {
-                    var search = $("#artist").val() + ' ' + songs[i].title + ' lyrics';
-                    window.open("https://www.google.com/search?q=" + encodeURIComponent(search), '_blank');
-                    window.open("songs?lyrics=true & id=" + songs[i].id);
-                    if (i == 2) {
-                      break;
-                    }
-                  }
-                }
-              });
-            }
-          )
-          .catch(function(err) {
-            console.log('Fetch Error: ', err);
-        });
+  // Play album handler
+  $(document).on('click', "span[name='play_album']", async function() {
+    try {
+      const songId = extractIdFromElement(this, JUKEBOX_CONFIG.PLAY_ALBUM_PREFIX);
+      const data = await fetchSongs({ id: songId, album: 'true' });
+      if (data.length > 0) {
+        display_jukebox(data[0].album, data, deviceType);
       }
-
+    } catch (error) {
+      console.error('Error playing album:', error);
+    }
   });
 
-  $("button[name='reset']").on(function() {
-    $(this).parent().parent().find('input').val('');
-    $(this).parent().parent().find('input').focus();
+  // Play single song handler
+  $(document).on('click', "span[name='play']", async function() {
+    try {
+      const songId = extractIdFromElement(this, JUKEBOX_CONFIG.PLAY_PREFIX);
+      const data = await fetchSongs({ id: songId });
+      if (data.length > 0) {
+        display_jukebox(data[0].album, data, deviceType);
+      }
+    } catch (error) {
+      console.error('Error playing song:', error);
+    }
   });
 
-  $("#shuffle").on('click', function() {
-    var url = '/songs?all&do_not_play=true';
-
-    fetch(url)
-      .then(
-        function(response) {
-
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            var songs = shuffle(data);
-            display_jukebox("EVERYBODY SHUFFLIN...", songs, device_type, true);
-          });
-        }
-      )
-      .catch(function(err) {
-          console.log('Fetch Error: ', err);
-    });
-
+  // Play genre handler
+  $(document).on('click', "a[name='play_genre']", async function() {
+    try {
+      const genre = $(this).parent().prev('td').find('div').text();
+      const data = await fetchSongs({ genre });
+      display_jukebox(genre, data, deviceType);
+    } catch (error) {
+      console.error('Error playing genre:', error);
+    }
   });
 
-  $("a[name='title']").on('mousedown', function(event) {
-    switch (event.which) {
-      case 3:
-        var title = $(this).text();
-        var artist  = $(this).parent().next().find('a').text();
-        var url ='http://www.google.com/search?q=' + artist + ' ' + title + ' wikipedia';
-        window.open(url, title, 'toolbars=0,width=1200,height=800');
-        window.location.href = $(this).attr('href');
-        break;
-
-      default:
-        window.location.href = $(this).attr('href');
+  // Get lyrics handler
+  $("#get_lyrics").off().on("click", async function() {
+    const artist = $("#artist").val().trim();
+    if (!artist) {
+      console.warn('No artist specified');
+      return;
     }
 
+    try {
+      const data = await fetchSongs({
+        artist,
+        lyrics_empty: 'true',
+        exact_match: $('#exact_match').is(':checked'),
+        exempt: $('#exempt').val()
+      });
+
+      if (data.length === 0) {
+        alert('No missing lyrics');
+        return;
+      }
+
+      const limit = Math.min(data.length, MAX_LYRICS_WINDOWS);
+      for (let i = 0; i < limit; i++) {
+        const searchQuery = `${artist} ${data[i].title} lyrics`;
+        window.open(`${JUKEBOX_CONFIG.GOOGLE_SEARCH_URL}?q=${encodeURIComponent(searchQuery)}`, '_blank');
+        window.open(`songs?lyrics=true&id=${data[i].id}`);
+      }
+    } catch (error) {
+      console.error('Error getting lyrics:', error);
+    }
+  });
+
+  // Reset form handler
+  $(document).on('click', "button[name='reset']", function() {
+    const $form = $(this).parent().parent();
+    $form.find('input').val('').first().focus();
+  });
+
+  // Shuffle with playback disabled
+  $("#shuffle").on('click', async function() {
+    try {
+      const data = await fetchSongs({ all: '', do_not_play: 'true' });
+      const shuffled = shuffle(data);
+      display_jukebox(JUKEBOX_CONFIG.SHUFFLE_TITLE, shuffled, deviceType, true);
+    } catch (error) {
+      console.error('Error shuffling:', error);
+    }
+  });
+
+  // Title click handler (right-click opens Wikipedia)
+  $(document).on('mousedown', "a[name='title']", function(event) {
+    if (event.which === RIGHT_CLICK) {
+      const title = $(this).text();
+      const artist = $(this).parent().next().find('a').text();
+      const searchQuery = `${artist} ${title} wikipedia`;
+      window.open(`${JUKEBOX_CONFIG.WIKIPEDIA_SEARCH_URL}?q=${encodeURIComponent(searchQuery)}`, title, 'toolbars=0,width=1200,height=800');
+    }
+    window.location.href = $(this).attr('href');
   });
 
 });
 
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle
-  while(0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
+/**
+ * Escape HTML special characters to prevent XSS
+ */
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
-function display_jukebox(title, songs, device_type, display_album_button=false) {
-  let song_url = '/song/play/';
-  let jukebox_form = '<div class="audio">';
-  jukebox_form += '<figure>';
-  jukebox_form += '<audio controls src="' + song_url + songs[0].id + '">Your browser does not support the<code>audio</code> element.</audio>';
-  jukebox_form += '</figure>';
-  jukebox_form += '<button class="previous btn-jukebox">Previous</button><button class="next btn-jukebox">Next</button><button class="restart btn-jukebox">Restart</button><button class="album btn-jukebox">Album</button>';
-
-  jukebox_form += '<div id=div-jukebox>';
-  for (let i = 0; i < songs.length; i++) {
-    var artist = '';
-      if (songs[i].artists) {
-        artist = songs[i].artists[0].artist;
-        if (artist == 'Compilations' && songs[i].notes) {
-          if (songs[i].notes.indexOf('Artist=') > -1) {
-            artist = songs[i].notes;
-            artist = artist.replace('Artist=', '');
-            var idx = artist.indexOf(';');
-            if (idx > -1) {
-              artist = artist.substring(0,idx);
-            }
-          }
-        }
-        artist = ' - ' + artist;
-      }
-      jukebox_form += '<span id="song-' + songs[i].id + '">' + songs[i].title + artist + '</span><br>';
+/**
+ * Fisher-Yates shuffle algorithm
+ * Shuffles array in-place and returns it
+ */
+function shuffle(array) {
+  const arr = [...array]; // Create copy to avoid mutating original
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]]; // Destructuring swap
   }
-  jukebox_form += '</div>';
-  jukebox_form += '</div>';
+  return arr;
+}
 
-  $(jukebox_form).dialog({
-    title: title,
+/**
+ * Display a jukebox dialog with audio player and song list
+ */
+function display_jukebox(title, songs, deviceType, displayAlbumButton = false) {
+  if (!songs || songs.length === 0) {
+    console.warn('No songs provided to jukebox');
+    return;
+  }
+
+  const songUrl = JUKEBOX_CONFIG.SONG_URL;
+  let jukeboxHtml = `
+    <div class="audio">
+      <figure>
+        <audio controls src="${songUrl}${songs[0].id}">
+          Your browser does not support the <code>audio</code> element.
+        </audio>
+      </figure>
+      <button class="previous btn-jukebox">Previous</button>
+      <button class="next btn-jukebox">Next</button>
+      <button class="restart btn-jukebox">Restart</button>
+      <button class="album btn-jukebox">Album</button>
+      <div id="div-jukebox">
+  `;
+
+  // Build song list
+  songs.forEach(song => {
+    let artist = '';
+    if (song.artists && song.artists.length > 0) {
+      artist = song.artists[0].artist;
+      if (artist === 'Compilations' && song.notes) {
+        const artistMatch = song.notes.match(/Artist=([^;]*)/);
+        if (artistMatch) {
+          artist = artistMatch[1];
+        }
+      }
+      artist = ` - ${artist}`;
+    }
+    jukeboxHtml += `<span id="song-${song.id}">${escapeHtml(song.title)}${artist}</span><br>`;
+  });
+
+  jukeboxHtml += '</div></div>';
+
+  $(jukeboxHtml).dialog({
+    title,
     close: function() {
       $(this).remove();
     },
     modal: false,
-    width: device_type == 'desktop' ? 500 : 330,
-    open : function() {
-
-      $('div.ui-dialog').addClass('ui-dialog-jukebox');
-
-      var idx = 0;
-      var song = songs[0];
-
-      // Add css styling
-      let previous_id = song.id;
-      $("#song-" + previous_id).addClass('font-weight-bold');
-      $("span.ui-dialog-title").html(song.title);
-
-      let audio = $(this).find('audio').get(0);
-      let next = $(this).find('button.next').get(0);
-      let previous = $(this).find('button.previous').get(0);
-      let restart = $(this).find('button.restart').get(0);
-      let album = $(this).find('button.album').get(0);
-
-      audio.addEventListener('ended',function(e) {
-        idx += 1;
-        previous_id = next_song(e, audio, previous_id, idx);
-      });
-
-      previous.addEventListener('click', function(e) {
-        idx -= 1;
-        previous_id = next_song(e, audio, previous_id, idx);
-      });
-
-      next.addEventListener('click', function(e) {
-        idx += 1;
-        previous_id = next_song(e, audio, previous_id, idx);
-      });
-
-      restart.addEventListener('click', function(e) {
-        idx = 0;
-        previous_id = next_song(e, audio, previous_id, idx);
-      });
-
-      album.addEventListener('click', function() {
-        play_album(previous_id, device_type);
-        $('button.ui-dialog-titlebar-close').trigger('click');
-      });
-
-      if (!display_album_button) {
-        $('button.album').hide();
-      }
-
-      if (songs.length == 0) {
-        $('button.next').hide();
-        $('button.restart').hide();
-      }
-
-      play(null, audio);
-
-      function play(event, audio) {
-
-        if (idx == 0) {
-          $('button.previous').hide();
-          $('button.restart').hide();
-        } else {
-          $('button.previous').show();
-          $('button.restart').show();
-        }
-        var playPromise = audio.play();
-          playPromise.then(function() {
-            // Automatic playback started!
-          }).catch(function() {
-            if (event.target.className == 'previous btn-jukebox') {
-              $('button.previous').click();
-            } else {
-             $('button.next').click();
-            }
-          });
-      }
-
-      function next_song(event, audio, previous_id, idx) {
-        $('button.next').disabled = false;
-        song = songs[idx];
-        if (song !== undefined) {
-          audio.src = song_url + song.id;
-          $("#current-song").text(song.title);
-          $("#song-" + previous_id).removeClass('font-weight-bold');
-          previous_id = song.id;
-          $("#song-" + previous_id).addClass('font-weight-bold');
-          $("span.ui-dialog-title").html(song.title);
-          audio.pause();
-          audio.load();
-          play(event, audio);
-          return previous_id;
-        } else {
-           $('button.next').disabled = true;
-        } 
-      }
-
-      $("#div-jukebox").on('click', function() {
-        $('button.next').trigger('click');
-      });
-
+    width: deviceType === 'desktop' ? 500 : 330,
+    open: function() {
+      initializeJukeboxPlayer(this, songs, songUrl, deviceType, displayAlbumButton);
     }
-
   });
 }
 
-function play_album(song_id, device_type) {
-  var url ='/songs?id=' + song_id + '&album=true';
+/**
+ * Initialize jukebox player controls and event handlers
+ */
+function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, displayAlbumButton) {
+  $('div.ui-dialog').addClass('ui-dialog-jukebox');
 
-  fetch(url)
-    .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);
-            return;
-          }
-          response.json().then(function(data) {
-            display_jukebox(data[0].album, data, device_type);
+  let currentIndex = 0;
+  let previousSongId = songs[0].id;
+  let songAdvanced = false;
+  let audioEndCheckIntervalId = null;
+  let pendingPlayRetryTimeoutId = null;
+  let pendingPlay = false;
+  const debugAudio = isMobileAudioDebugEnabled(deviceType);
+
+  const $dialog = $(dialogElement);
+  const $audio = $dialog.find('audio')[0];
+  const $nextBtn = $dialog.find('button.next')[0];
+  const $prevBtn = $dialog.find('button.previous')[0];
+  const $restartBtn = $dialog.find('button.restart')[0];
+  const $albumBtn = $dialog.find('button.album')[0];
+
+  // Set initial styling
+  $(`#song-${previousSongId}`).addClass('font-weight-bold');
+  $("span.ui-dialog-title").html(escapeHtml(songs[0].title));
+
+  function logAudioDebug(message, details = {}) {
+    if (!debugAudio) {
+      // return;
+    }
+
+    console.log('[jukebox-audio-debug]', message, {
+      currentIndex,
+      songId: previousSongId,
+      currentTime: $audio?.currentTime,
+      duration: $audio?.duration,
+      ended: $audio?.ended,
+      paused: $audio?.paused,
+      visibilityState: document.visibilityState,
+      ...details,
+    });
+  }
+
+  // Some mobile browsers can miss `ended` while the device is locked/backgrounded.
+  // These fallbacks ensure we still advance when playback reaches the end.
+  const advanceToNextSong = (source = 'unknown') => {
+    if (songAdvanced) {
+      logAudioDebug('advance-blocked-song-already-advanced', { source });
+      return;
+    }
+    logAudioDebug('advance-to-next-song', { source });
+    songAdvanced = true;
+    handleSongChange(1);
+  };
+
+  function hasTrackReachedEnd() {
+    if (!$audio || !Number.isFinite($audio.duration) || $audio.duration <= 0) {
+      return false;
+    }
+
+    // Do NOT use $audio.ended here — iOS sets it to true when the OS interrupts
+    // audio on lock, causing premature track advances mid-song. The position
+    // check is sufficient and immune to that false signal.
+    return $audio.currentTime >= ($audio.duration - 0.35);
+  }
+
+  function resetEndDetection() {
+    songAdvanced = false;
+    pendingPlay = false;
+    if (pendingPlayRetryTimeoutId !== null) {
+      clearTimeout(pendingPlayRetryTimeoutId);
+      pendingPlayRetryTimeoutId = null;
+    }
+    logAudioDebug('reset-end-detection');
+  }
+
+  function checkTrackEnd(source = 'check') {
+    if (hasTrackReachedEnd()) {
+      advanceToNextSong(source);
+    }
+  }
+
+  function attemptPlay(source = 'playSong') {
+    const playPromise = $audio.play();
+    if (!playPromise) {
+      return;
+    }
+
+    playPromise.catch(() => {
+      if (document.visibilityState === 'hidden') {
+        // Phone is locked/backgrounded. Wait for resume events.
+        pendingPlay = true;
+        logAudioDebug('play-deferred-until-unlock', { source });
+        return;
+      }
+
+      // Visible playback can still fail briefly after source swaps on Android.
+      // Retry once shortly, then leave current track selected (no auto-skip).
+      if (pendingPlayRetryTimeoutId !== null) {
+        clearTimeout(pendingPlayRetryTimeoutId);
+      }
+      pendingPlayRetryTimeoutId = window.setTimeout(() => {
+        pendingPlayRetryTimeoutId = null;
+        const retryPromise = $audio.play();
+        if (retryPromise) {
+          retryPromise.catch(() => {
+            pendingPlay = true;
+            logAudioDebug('play-retry-failed-waiting-for-user-or-focus', { source });
           });
         }
-    )
-    .catch(function(err) {
-        console.log('Fetch Error: ', err);
+      }, 250);
+    });
+  }
+
+  $audio.addEventListener('ended', () => advanceToNextSong('ended'));
+  $audio.addEventListener('pause', () => {
+    logAudioDebug('pause-event');
+    if (hasTrackReachedEnd()) {
+      advanceToNextSong('pause');
+    }
   });
+  $audio.addEventListener('timeupdate', () => checkTrackEnd('timeupdate'));
+
+  const onVisibilityChange = () => {
+    logAudioDebug('visibilitychange-event');
+    if (document.visibilityState === 'visible' && pendingPlay) {
+      pendingPlay = false;
+      logAudioDebug('resuming-pending-play-on-unlock');
+      attemptPlay('unlock-visibilitychange');
+    }
+    checkTrackEnd('visibilitychange');
+  };
+
+  const onWindowFocus = () => {
+    logAudioDebug('focus-event');
+    if (pendingPlay) {
+      pendingPlay = false;
+      attemptPlay('window-focus');
+    }
+    checkTrackEnd('focus');
+  };
+
+  const onPageShow = () => {
+    logAudioDebug('pageshow-event');
+    if (pendingPlay) {
+      pendingPlay = false;
+      attemptPlay('pageshow');
+    }
+    checkTrackEnd('pageshow');
+  };
+
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  window.addEventListener('focus', onWindowFocus);
+  window.addEventListener('pageshow', onPageShow);
+
+  audioEndCheckIntervalId = window.setInterval(() => checkTrackEnd('interval'), 1000);
+
+  $dialog.on('dialogclose', () => {
+    if (audioEndCheckIntervalId !== null) {
+      clearInterval(audioEndCheckIntervalId);
+    }
+    if (pendingPlayRetryTimeoutId !== null) {
+      clearTimeout(pendingPlayRetryTimeoutId);
+      pendingPlayRetryTimeoutId = null;
+    }
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('focus', onWindowFocus);
+    window.removeEventListener('pageshow', onPageShow);
+    logAudioDebug('dialog-closed-cleanup');
+  });
+
+  // Button event listeners
+  $prevBtn.addEventListener('click', () => handleSongChange(-1));
+  $nextBtn.addEventListener('click', () => handleSongChange(1));
+  $restartBtn.addEventListener('click', () => handleSongChange(-currentIndex));
+  $albumBtn.addEventListener('click', () => {
+    playAlbum(previousSongId, deviceType);
+    $dialog.closest('.ui-dialog').find('.ui-dialog-titlebar-close').trigger('click');
+  });
+
+  // Control visibility
+  if (!displayAlbumButton) {
+    $($albumBtn).hide();
+  }
+
+  if (songs.length === 0) {
+    $($nextBtn).hide();
+    $($restartBtn).hide();
+  }
+
+  playSong(null);
+
+  // Event delegation for song list clicks
+  $dialog.find('#div-jukebox').off('click').on('click', () => {
+    $nextBtn.click();
+  });
+
+  /**
+   * Handle song change (next/previous/restart)
+   */
+  function handleSongChange(offset) {
+    currentIndex += offset;
+    updateSong();
+  }
+
+  /**
+   * Update song display and playback
+   */
+  function updateSong() {
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= songs.length) currentIndex = songs.length - 1;
+
+    const song = songs[currentIndex];
+    if (!song) {
+      $nextBtn.disabled = true;
+      return;
+    }
+
+    $nextBtn.disabled = false;
+    $audio.src = songUrl + song.id;
+    
+    // Update UI
+    $(`#song-${previousSongId}`).removeClass('font-weight-bold');
+    previousSongId = song.id;
+    $(`#song-${previousSongId}`).addClass('font-weight-bold');
+    $("span.ui-dialog-title").html(escapeHtml(song.title));
+
+    // Reset and play
+    resetEndDetection();
+    $audio.pause();
+    $audio.load();
+    playSong();
+  }
+
+  /**
+   * Play song with navigation button visibility
+   */
+  function playSong(event = null) {
+    // Update button visibility
+    if (currentIndex === 0) {
+      $($prevBtn).hide();
+      $($restartBtn).hide();
+    } else {
+      $($prevBtn).show();
+      $($restartBtn).show();
+    }
+
+    attemptPlay(event?.target?.className || 'playSong');
+  }
+}
+
+/**
+ * Fetch and play an album
+ */
+async function playAlbum(songId, deviceType) {
+  try {
+    const data = await fetchSongs({ id: songId, album: 'true' });
+    if (data.length > 0) {
+      display_jukebox(data[0].album, data, deviceType);
+    }
+  } catch (error) {
+    console.error('Error playing album:', error);
+  }
 }
