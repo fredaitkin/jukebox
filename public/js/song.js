@@ -306,7 +306,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
     $($restartBtn).hide();
   }
 
-  playSong(null);
+  playSong();
 
   // Event delegation for song list clicks
   $dialog.find('#div-jukebox').off('click').on('click', () => {
@@ -352,7 +352,7 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
   /**
    * Play song with navigation button visibility
    */
-  function playSong(event = null) {
+  function playSong() {
     // Update button visibility
     if (currentIndex === 0) {
       $($prevBtn).hide();
@@ -364,13 +364,15 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
 
     const playPromise = $audio.play();
     if (playPromise) {
-      playPromise.catch(() => {
-        // Autoplay prevented, move to next song
-        if (event?.target?.className === 'previous btn-jukebox') {
-          $prevBtn.click();
-        } else {
-          $nextBtn.click();
-        }
+      playPromise.catch((error) => {
+        console.error('Audio play failed:', {
+          name: error?.name,
+          message: error?.message,
+          error,
+        });
+
+        // Stop playback flow on error instead of auto-skipping tracks.
+        $audio.pause();
       });
     }
   }
