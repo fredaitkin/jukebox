@@ -11,6 +11,7 @@ const JUKEBOX_CONFIG = {
 
 const RIGHT_CLICK = 3;
 const MAX_LYRICS_WINDOWS = 3;
+const TOUCH_CLICK_DEDUPE_MS = 700;
 
 /**
  * Utility function to fetch data with error handling
@@ -41,6 +42,7 @@ function extractIdFromElement(element, prefix) {
 
 $(function() {
   const deviceType = $("meta[name='device-type']").attr("content");
+  let lastPlayAlbumTouchAt = 0;
 
   // Album dropdown handler
   $("#album").on('change', async function() {
@@ -68,8 +70,26 @@ $(function() {
     }
   });
 
-  // Play album handler
-  $(document).on('click', "span[name='play_album']", async function() {
+  // Play album handler (touch-first for faster mobile response)
+  $(document).on('touchend click', "span[name='play_album']", async function(event) {
+    const now = Date.now();
+    const isTouchEvent = event.type === 'touchend';
+
+    if (isTouchEvent) {
+      lastPlayAlbumTouchAt = now;
+      event.preventDefault();
+    } else if (now - lastPlayAlbumTouchAt < TOUCH_CLICK_DEDUPE_MS) {
+      // Ignore the synthetic click that follows a touch event.
+      return;
+    }
+
+    if ($(this).data('loading') === true) {
+      return;
+    }
+
+    $(this).data('loading', true);
+    this.style.touchAction = 'manipulation';
+
     try {
       const songId = extractIdFromElement(this, JUKEBOX_CONFIG.PLAY_ALBUM_PREFIX);
       const data = await fetchSongs({ id: songId, album: 'true' });
@@ -78,6 +98,8 @@ $(function() {
       }
     } catch (error) {
       console.error('Error playing album:', error);
+    } finally {
+      $(this).data('loading', false);
     }
   });
 
