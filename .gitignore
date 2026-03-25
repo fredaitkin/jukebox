@@ -24,3 +24,4 @@ tests/_support/FunctionalTester.php
 tests/_support/UnitTester.php
 tests/functional*
 *.csv
+.phpunit*

@@ -51,12 +51,23 @@ function replaceSpecialFileSystemChars(String $s) {
  * @param String $query SQL query
  */
 function isValidReadQuery(String $query) {
-    if (stripos($query, 'DELETE') !== false
-        || stripos( $query, 'UPDATE') !== false
-        || stripos( $query, 'INSERT') !== false
-        || stripos( $query, 'ALTER') !== false
-        || stripos( $query, 'DROP') !== false) {
+    $normalized_query = trim(preg_replace('/\s+/', ' ', $query));
+
+    if ($normalized_query === '') {
         return false;
     }
+
+    if (! preg_match('/^(select|show|describe|desc|explain)\b/i', $normalized_query)) {
+        return false;
+    }
+
+    if (preg_match('/;|--|#|\/\*/', $normalized_query)) {
+        return false;
+    }
+
+    if (preg_match('/\b(delete|update|insert|alter|drop|truncate|create|replace|rename|grant|revoke|call|load\s+data|outfile|dumpfile)\b/i', $normalized_query)) {
+        return false;
+    }
+
     return true;
 }
