@@ -304,11 +304,10 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
    */
   function updateSong() {
     if (currentIndex < 0) currentIndex = 0;
-    if (currentIndex >= songs.length) currentIndex = songs.length - 1;
 
     const song = songs[currentIndex];
     if (!song) {
-      $nextBtn.disabled = true;
+      $($nextBtn).hide();
       return;
     }
 
