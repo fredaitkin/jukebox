@@ -69,7 +69,7 @@ $(function() {
   });
 
   // Play album handler
-  $(document).on('click', "span[name='play_album']", async function() {
+  $(document).on('click', "td[name='play_album']", async function() {
     try {
       const songId = extractIdFromElement(this, JUKEBOX_CONFIG.PLAY_ALBUM_PREFIX);
       const data = await fetchSongs({ id: songId, album: 'true' });
@@ -82,7 +82,7 @@ $(function() {
   });
 
   // Play single song handler
-  $(document).on('click', "span[name='play']", async function() {
+  $(document).on('click', "td[name='play']", async function() {
     try {
       const songId = extractIdFromElement(this, JUKEBOX_CONFIG.PLAY_PREFIX);
       const data = await fetchSongs({ id: songId });
