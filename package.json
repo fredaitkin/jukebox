@@ -9,7 +9,7 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "axios": "^1.13.2",
+        "axios": "^1.15.0",
         "bootstrap": "^4.6.1",
         "cross-env": "^5.1",
         "eslint": "^9.39.2",
