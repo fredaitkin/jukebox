@@ -18,7 +18,7 @@
         "jquery": "^3.6.0",
         "jquery-ui": "^1.13.2",
         "laravel-mix": "^6.0.43",
-        "lodash": "^4.17.23",
+        "lodash": "^4.18.1",
         "popper.js": "^1.12",
         "postcss": "^8.5.15",
         "resolve-url-loader": "^5.0.0",
