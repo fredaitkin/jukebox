@@ -264,6 +264,16 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
   $(`#song-${previousSongId}`).addClass('font-weight-bold');
   $("span.ui-dialog-title").html(escapeHtml(songs[0].title));
 
+  // AirPods / media-remote controls
+  const firstSong   = songs[0];
+  const firstArtist = firstSong.artists?.[0]?.artist ?? '';
+  initializeAirPodsControls(
+    $audio,
+    () => handleSongChange(1),
+    () => handleSongChange(-1),
+    { title: firstSong.title, artist: firstArtist }
+  );
+
   // Event listeners
   $audio.addEventListener('ended', () => handleSongChange(1));
   $prevBtn.addEventListener('click', () => handleSongChange(-1));
@@ -320,6 +330,10 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
     $(`#song-${previousSongId}`).addClass('font-weight-bold');
     $("span.ui-dialog-title").html(escapeHtml(song.title));
 
+    // Refresh AirPods / lock-screen Now Playing metadata
+    const artist = song.artists?.[0]?.artist ?? '';
+    updateAirPodsMetadata(song.title, artist);
+
     // Reset and play
     $audio.pause();
     $audio.load();
@@ -351,6 +365,70 @@ function initializeJukeboxPlayer(dialogElement, songs, songUrl, deviceType, disp
       });
     }
   }
+}
+
+/**
+ * Initialize AirPods (and other media remote) controls via the Media Session API.
+ *
+ * AirPods gesture → Media Session action mapping:
+ *   Single click  → play / pause  (toggles playback)
+ *   Double click  → nexttrack     (advance to next song)
+ *   Triple click  → previoustrack (go back to previous song)
+ *
+ * @param {HTMLAudioElement} audioEl   - The active <audio> element.
+ * @param {Function}         onNext    - Callback to advance to the next track.
+ * @param {Function}         onPrev    - Callback to go back to the previous track.
+ * @param {Object}           songMeta  - { title, artist } for the lock-screen display.
+ */
+function initializeAirPodsControls(audioEl, onNext, onPrev, songMeta = {}) {
+  if (!('mediaSession' in navigator)) {
+    return; // Media Session API not supported in this browser
+  }
+
+  // Populate the OS / lock-screen "Now Playing" card when metadata is provided
+  if (songMeta.title) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:  songMeta.title  || '',
+      artist: songMeta.artist || '',
+    });
+  }
+
+  // Single click: play
+  navigator.mediaSession.setActionHandler('play', () => {
+    audioEl.play().catch(err => console.warn('AirPods play blocked:', err));
+  });
+
+  // Single click: pause
+  navigator.mediaSession.setActionHandler('pause', () => {
+    audioEl.pause();
+  });
+
+  // Double click (right AirPod / forward gesture): next track
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    onNext();
+  });
+
+  // Triple click / back gesture: previous track
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    onPrev();
+  });
+}
+
+/**
+ * Update the Media Session "Now Playing" metadata displayed on the lock screen /
+ * notification centre while AirPods are in use.
+ *
+ * @param {string} title
+ * @param {string} artist
+ */
+function updateAirPodsMetadata(title, artist) {
+  if (!('mediaSession' in navigator)) {
+    return;
+  }
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title:  title  || '',
+    artist: artist || '',
+  });
 }
 
 /**
