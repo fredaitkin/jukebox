@@ -86,11 +86,11 @@
                                     <td class="table-text">
                                         <div>{{ $song->playtime }}</div>
                                     </td>
-                                    <td>
-                                       <span name="play" id="play-{{ $song->id }}"><i class="fa fa-play"></i></span>
+                                    <td name="play">
+                                       <span id="play-{{ $song->id }}"><i class="fa fa-play"></i></span>
                                     </td>
-                                    <td>
-                                       <span name="play_album" id="play-album-{{ $song->id }}"><i class="fa fa-play"></i></span>
+                                    <td name="play_album">
+                                       <span id="play-album-{{ $song->id }}"><i class="fa fa-play"></i></span>
                                     </td>
                                     <td>
                                        <span name="playlist" id="playlist-{{ $song->id }}" data-title="{{ $song->title }}"><i class="fa fa-list"></i></span>
