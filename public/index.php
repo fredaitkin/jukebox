@@ -25,6 +25,23 @@ require __DIR__.'/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
+| Populate Query Parameters Under CLI
+|--------------------------------------------------------------------------
+|
+| When the app is served through the Node development proxy (server.cjs),
+| PHP runs under the CLI SAPI, which never parses QUERY_STRING into $_GET.
+| Populate it here so controllers see query parameters as usual. This has
+| no effect under a real web server (cgi-fcgi, cli-server, etc).
+|
+*/
+
+if (PHP_SAPI === 'cli' && !empty($_SERVER['QUERY_STRING'])) {
+    parse_str($_SERVER['QUERY_STRING'], $_GET);
+    $_REQUEST = array_merge($_REQUEST, $_GET);
+}
+
+/*
+|--------------------------------------------------------------------------
 | Turn On The Lights
 |--------------------------------------------------------------------------
 |
