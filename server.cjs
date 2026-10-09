@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawn } = require('child_process');
 
 const PORT = 8000;
 
@@ -34,37 +34,48 @@ http.createServer((req, res) => {
         return fs.createReadStream(filePath).pipe(res);
     }
 
-    // 2. If it's not a static file, route it safely to Laravel's PHP engine
-    try {
-        const env = Object.assign({}, process.env);
+    // 2. Not a static file: hand the full request (headers, cookies, body) to Laravel via the PHP bridge
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => {
+        const fail = (message) => {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Laravel Proxy Processing Error:\n' + message);
+        };
 
-        env.REQUEST_URI = req.url;
-        env.REQUEST_METHOD = req.method;
-        env.SERVER_NAME = 'localhost';
-        env.SERVER_PORT = PORT.toString();
-        env.HTTP_HOST = `localhost:${PORT}`;
-        env.SCRIPT_FILENAME = path.join(__dirname, 'public/index.php');
-        env.SCRIPT_NAME = '/index.php';
+        const php = spawn('php', ['server-bridge.php'], { cwd: __dirname });
+        const stdout = [];
+        const stderr = [];
 
-        // Forward the query string so public/index.php can populate $_GET (PHP CLI never does this itself)
-        const queryIndex = req.url.indexOf('?');
-        env.QUERY_STRING = queryIndex !== -1 ? req.url.slice(queryIndex + 1) : '';
+        php.stdout.on('data', (chunk) => stdout.push(chunk));
+        php.stderr.on('data', (chunk) => stderr.push(chunk));
+        php.on('error', (error) => fail(error.message));
+        php.on('close', () => {
+            let result;
+            try {
+                result = JSON.parse(Buffer.concat(stdout).toString());
+            } catch (error) {
+                return fail(Buffer.concat(stderr).toString() || Buffer.concat(stdout).toString());
+            }
 
-        if (req.headers['user-agent']) env.HTTP_USER_AGENT = req.headers['user-agent'];
-        if (req.headers['accept']) env.HTTP_ACCEPT = req.headers['accept'];
+            const body = Buffer.from(result.body, 'base64');
+            res.statusCode = result.status;
+            for (const [name, values] of Object.entries(result.headers)) {
+                if (['content-length', 'transfer-encoding'].includes(name.toLowerCase())) continue;
+                res.setHeader(name, values);
+            }
+            if (result.cookies.length) res.setHeader('Set-Cookie', result.cookies);
+            res.setHeader('Content-Length', body.length);
+            res.end(body);
+        });
 
-        const output = execSync(`php public/index.php`, { env: env, maxBuffer: 1024 * 1024 * 15 });
-
-        // PHP CLI can't send headers, so sniff the body to return a sensible content type
-        const trimmed = output.toString().trimStart();
-        const contentType = (trimmed.startsWith('{') || trimmed.startsWith('[')) ? 'application/json' : 'text/html';
-
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.end(output);
-    } catch (error) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end("Laravel Proxy Processing Error:\n" + (error.stderr?.toString() || error.message));
-    }
+        php.stdin.end(JSON.stringify({
+            method: req.method,
+            url: req.url,
+            headers: req.headers,
+            body: Buffer.concat(chunks).toString('base64')
+        }));
+    });
 }).listen(PORT, () => {
     console.log(`Laravel app with static asset routing running at http://localhost:${PORT}`);
 });
