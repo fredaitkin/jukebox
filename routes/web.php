@@ -19,9 +19,10 @@ Route::get('404', function () {
     return abort(404);
 });
 
-$auth = (config('view.device') === 'mobile') ? 'guest' : 'auth';
+// 'guest' bounces logged-in users to /home, which is in this group, so it can't be used to mean "no login required"
+$auth = (config('view.device') === 'mobile') ? [] : ['auth'];
 
-Route::middleware([$auth])->group(function () {
+Route::middleware($auth)->group(function () {
 
     // Home route
 
