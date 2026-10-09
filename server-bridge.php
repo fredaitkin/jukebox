@@ -21,6 +21,9 @@ foreach ($headers as $name => $value) {
     $server[in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'], true) ? $key : 'HTTP_' . $key] = $value;
 }
 
+// config/view.php detects the device from $_SERVER while the app boots, before the request object exists
+$_SERVER = array_merge($_SERVER, $server);
+
 $cookies = [];
 foreach (explode(';', $headers['cookie'] ?? '') as $pair) {
     if (strpos($pair, '=') !== false) {
