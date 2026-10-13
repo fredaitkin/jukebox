@@ -51,14 +51,16 @@ http.createServer((req, res) => {
         php.stderr.on('data', (chunk) => stderr.push(chunk));
         php.on('error', (error) => fail(error.message));
         php.on('close', () => {
+            const output = Buffer.concat(stdout);
+            const headerEnd = output.indexOf(0x0a);
             let result;
             try {
-                result = JSON.parse(Buffer.concat(stdout).toString());
+                result = JSON.parse(output.subarray(0, headerEnd).toString());
             } catch (error) {
-                return fail(Buffer.concat(stderr).toString() || Buffer.concat(stdout).toString());
+                return fail(Buffer.concat(stderr).toString() || output.toString());
             }
 
-            const body = Buffer.from(result.body, 'base64');
+            const body = output.subarray(headerEnd + 1);
             res.statusCode = result.status;
             for (const [name, values] of Object.entries(result.headers)) {
                 if (['content-length', 'transfer-encoding'].includes(name.toLowerCase())) continue;

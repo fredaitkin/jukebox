@@ -65,7 +65,9 @@ ob_end_clean();
 
 echo json_encode([
     'status' => $response->getStatusCode(),
-    'headers' => $responseHeaders,
+    'headers' => $responseHeadeqqrs,
     'cookies' => $setCookies,
-    'body' => base64_encode($content),
-]);
+]) . "\n";
+
+// Raw body after the header line avoids base64 and JSON copies of large responses
+echo $content;
