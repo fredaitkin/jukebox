@@ -15,7 +15,6 @@ class WordTest extends TestCase
      */
     public function testSetCaseTest()
     {
-        // FIXME to work with new class structures.
         $command = app(Words::class);
         $word_info = $command->setCaseInfo('Abdul');
         $this->assertEquals('Abdul', $word_info['word']);
@@ -91,9 +90,9 @@ class WordTest extends TestCase
      */
     public function testProcessWordTest()
     {
-        $wordCloud = new WordCloud();
+        $wordCloud = app(WordCloud::class);
         $wordCloud->processWord('U.S.A.​');
         // Get words used to return a class array of words
-        $this->assertEquals('USA', array_key_first($wordCloud->get_words()));
+        $this->assertEquals('USA', array_key_first($wordCloud->getWords()));
     }
 }
