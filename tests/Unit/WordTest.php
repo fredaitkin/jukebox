@@ -16,7 +16,7 @@ class WordTest extends TestCase
     public function testSetCaseTest()
     {
         // FIXME to work with new class structures.
-        $command = new Words();
+        $command = app(Words::class);
         $word_info = $command->setCaseInfo('Abdul');
         $this->assertEquals('Abdul', $word_info['word']);
         $word_info = $command->setCaseInfo('DiMaggio');
