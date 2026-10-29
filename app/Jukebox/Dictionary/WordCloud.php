@@ -9,7 +9,6 @@ use Watson\Rememberable\Rememberable;
 
 class WordCloud implements WordCloudInterface
 {
-
     use Rememberable;
 
     /**
@@ -132,7 +131,7 @@ class WordCloud implements WordCloudInterface
         $model = new WordCloudModel();
         $model->word = $word['word'];
         $model->is_word = $word['is_word'];
-        
+
         $model->save();
 
         // Add word song references
@@ -176,9 +175,31 @@ class WordCloud implements WordCloudInterface
      * @param string $word
      *   The word.
      */
-    public function processWord($word) {
+    public function processWord($word)
+    {
         // Clean up text.
-        $chars_to_replace = [',', '.', '"', ' ', '!', '?', '[', ']', '(', ')', '{', '}', '&', "''", '*', ';', '…', '~', '​', ' '];
+        $chars_to_replace = [
+            ',',
+            '.',
+            '"',
+            ' ',
+            '!',
+            '?',
+            '[',
+            ']',
+            '(',
+            ')',
+            '{',
+            '}',
+            '&',
+            "''",
+            '*',
+            ';',
+            '…',
+            '~',
+            '​',
+            ' '
+        ];
         $word = str_replace(
             $chars_to_replace,
             array_fill(0, count($chars_to_replace), ''),
@@ -206,12 +227,24 @@ class WordCloud implements WordCloudInterface
     }
 
     /**
+     * Return the list of words in the word cloud.
+     *
+     * @return array
+     *   The list of words in the word cloud.
+     */
+    public function getWords()
+    {
+        return $this->words;
+    }
+
+    /**
      * Remove words from word cloud.
      *
      * @param int $id
      *   The song id.
      */
-    private function removeWords($id) {
+    private function removeWords($id)
+    {
         foreach($this->words as $word => $count):
             $wordCloud = WordCloudModel::whereRaw('LOWER(word) = ?', $word)->first();
             if($wordCloud):
@@ -227,8 +260,9 @@ class WordCloud implements WordCloudInterface
      *
      * @param int $id
      *   The song id.
-     */ 
-    private function addWords($id) {
+     */
+    private function addWords($id)
+    {
         foreach($this->words as $word => $count):
             $wordCloud = WordCloudModel::whereRaw('LOWER(word) = ?', mb_strtolower($word))->first();
             if($wordCloud):
@@ -256,7 +290,7 @@ class WordCloud implements WordCloudInterface
         return WordCloudModel::select('word_cloud.*')
             ->leftJoin('word_category', 'word_cloud.id', '=', 'word_category.word_cloud_id')
             ->leftJoin('category', 'word_category.category_id', '=', 'category.id')
-            ->whereRaw("UPPER(word) LIKE '%". strtoupper($filter)."%'")
+            ->whereRaw("UPPER(word) LIKE '%" . strtoupper($filter) . "%'")
             ->orWhere('category.category', 'like', '%' . strtolower($filter) . '%')
             ->paginate(10);
     }
@@ -270,7 +304,12 @@ class WordCloud implements WordCloudInterface
     {
         $wordCloud = WordCloudModel::find($id);
         foreach($wordCloud->songs as $song):
-            $data[] = array('id' => $song->id, 'song' => $song->title, 'artist' => $song->artists[0]->artist, 'lyrics' => $song->lyrics);
+            $data[] = [
+                'id' => $song->id,
+                'song' => $song->title,
+                'artist' => $song->artists[0]->artist,
+                'lyrics' => $song->lyrics
+            ];
         endforeach;
         usort($data, [$this, 'sortSongs']);
         return json_encode($data);
@@ -283,5 +322,4 @@ class WordCloud implements WordCloudInterface
     {
         return strcmp($a["song"], $b["song"]);
     }
-
 }
