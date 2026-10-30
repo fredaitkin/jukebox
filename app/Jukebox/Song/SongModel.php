@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SongModel extends Model
 {
-
     protected $table = 'songs';
 
     /**
@@ -141,7 +140,8 @@ class SongModel extends Model
      *
      * @return string
      */
-    public function getNotesArtistAttribute() {
+    public function getNotesArtistAttribute()
+    {
         $pos = strpos($this['notes'], 'Artist=');
         $artist = '';
         if ($pos !== false) {
@@ -156,5 +156,4 @@ class SongModel extends Model
         }
         return $artist;
     }
-
 }

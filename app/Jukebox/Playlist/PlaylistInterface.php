@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 interface PlaylistInterface
 {
-
     /**
      * Retrieve a playlist.
      *
@@ -46,5 +45,4 @@ interface PlaylistInterface
      * @return void
      */
     public function delete($name);
-
 }

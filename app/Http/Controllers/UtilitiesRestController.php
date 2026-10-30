@@ -18,7 +18,6 @@ use App\Http\Controllers\Controller;
  */
 class UtilitiesRestController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -28,5 +27,4 @@ class UtilitiesRestController extends Controller
     {
         return view('utilities', ['media_directory' => config('filesystems.media_directory')]);
     }
-
 }

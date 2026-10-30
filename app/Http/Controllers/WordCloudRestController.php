@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
  */
 class WordCloudRestController extends Controller
 {
-
     /**
      * The wordcloude interface
      *
@@ -49,7 +48,8 @@ class WordCloudRestController extends Controller
         $words = $this->wordcloud->all($request);
         if (empty($request->all()) || $request->has('page') || $request->has('filter')):
             $view = view(
-                'word_cloud', [
+                'word_cloud',
+                [
                     'word_cloud' => $words,
                     'filter' => $request->query('filter'),
                 ]
@@ -75,7 +75,8 @@ class WordCloudRestController extends Controller
     {
         $wordcloud = $this->wordcloud->get($id);
         return view(
-            'word', [
+            'word',
+            [
                 'page'          => $request->page,
                 'word_cloud'    => $wordcloud,
                 'categories'    => json_encode($wordcloud->categories),
@@ -94,11 +95,11 @@ class WordCloudRestController extends Controller
     {
         $this->wordcloud->createOrUpdate($request);
         return view(
-            'word_cloud', [
+            'word_cloud',
+            [
                 'word_cloud' => $this->wordcloud->all($request),
                 'filter' => '',
             ]
         );
     }
-
 }

@@ -5,12 +5,10 @@ namespace App\Jukebox\Artist;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-
 use Storage;
 
 class Artist implements ArtistInterface
 {
-
     /** Basic Routines */
 
     /**
@@ -107,7 +105,8 @@ class Artist implements ArtistInterface
     *
     * @param string $query
     */
-    public function search($query) {
+    public function search($query)
+    {
         return ArtistModel::select('artists.*')
             ->where('artist', 'LIKE', '%' . $query . '%')
             ->orWhere('country', 'LIKE', '%' . $query . '%')
@@ -167,7 +166,8 @@ class Artist implements ArtistInterface
     *
     * @param string $search
     */
-    public function searchByName($search) {
+    public function searchByName($search)
+    {
         return ArtistModel::select('id', 'artist as text')
             ->where('artist', 'LIKE', '%' . $search . '%')
             ->get();
@@ -180,7 +180,8 @@ class Artist implements ArtistInterface
     *
     * @param int $id
     */
-    public function getArtistAlbums($id) {
+    public function getArtistAlbums($id)
+    {
         $artist = ArtistModel::find($id);
         $albums = [];
         foreach($artist->songs as $song):
@@ -201,5 +202,4 @@ class Artist implements ArtistInterface
             ->get();
         return response()->json($data);
     }
-
 }

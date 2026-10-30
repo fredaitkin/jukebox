@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CategoryModel extends Model
 {
-
     protected $table = 'category';
 
     /**
@@ -29,5 +28,4 @@ class CategoryModel extends Model
      * @var array
      */
     protected $guarded = [];
-
 }

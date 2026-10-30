@@ -20,7 +20,6 @@ use Illuminate\Console\Command;
  */
 class UserUtilities extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -67,7 +66,7 @@ class UserUtilities extends Command
      * @return mixed
      */
     public function handle()
-    {   
+    {
         $this->options = $this->options();
 
         if ($this->options['list']):
@@ -100,8 +99,6 @@ class UserUtilities extends Command
         if ($this->options['create-p']):
             $this->createPermission();
         endif;
-
-
     }
 
     /**
@@ -112,7 +109,6 @@ class UserUtilities extends Command
     public function createUser()
     {
         try {
-
             if(isset($this->options['name'])):
                 $name = $this->options['name'];
             else:
@@ -161,7 +157,7 @@ class UserUtilities extends Command
                 exit;
             endif;
 
-            $user = new User;
+            $user = new User();
             $user->name = $name;
             $user->email = $email;
             $user->password = bcrypt($pw);
@@ -171,7 +167,6 @@ class UserUtilities extends Command
             $user->roles()->attach($user_role);
 
             $this->info('The user has been created successfully.');
-
         } catch (Exception $e) {
             $this->error("{$e}");
         }
@@ -185,20 +180,17 @@ class UserUtilities extends Command
     public function createRole()
     {
         try {
-
             $name_slug = $this->validateRetrieveNameSlug();
 
-            $role = new Role;
+            $role = new Role();
             $role->slug = $name_slug['slug'];
             $role->name = $name_slug['name'];
             $role->save();
 
             $this->info('The role has been created successfully.');
-
         } catch (Exception $e) {
             $this->error("{$e}");
         }
-
     }
 
     /**
@@ -243,20 +235,17 @@ class UserUtilities extends Command
     public function createPermission()
     {
         try {
-
             $name_slug = $this->validateRetrieveNameSlug();
 
-            $permission = new Permission;
+            $permission = new Permission();
             $permission->slug = $name_slug['slug'];
             $permission->name = $name_slug['name'];
             $permission->save();
 
             $this->info('The permission has been created successfully.');
-
         } catch (Exception $e) {
             $this->error("{$e}");
         }
-
     }
 
     /**
@@ -267,7 +256,6 @@ class UserUtilities extends Command
     public function addUserRole()
     {
         try {
-
             if(isset($this->options['name'])):
                 $name = $this->options['name'];
             else:
@@ -316,7 +304,7 @@ class UserUtilities extends Command
                 exit;
             endif;
 
-            $user = new User;
+            $user = new User();
             $user->name = $name;
             $user->email = $email;
             $user->password = bcrypt($pw);
@@ -326,10 +314,8 @@ class UserUtilities extends Command
             $user->roles()->attach($user_role);
 
             $this->info('The user has been created successfully.');
-
         } catch (Exception $e) {
             $this->error("{$e}");
         }
     }
-
 }

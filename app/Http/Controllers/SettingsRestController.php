@@ -18,7 +18,6 @@ use App\Http\Controllers\Controller;
  */
 class SettingsRestController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -28,5 +27,4 @@ class SettingsRestController extends Controller
     {
         return view('settings', ['media_directory' => config('filesystems.media_directory')]);
     }
-
 }

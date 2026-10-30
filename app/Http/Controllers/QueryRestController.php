@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
  */
 class QueryRestController extends Controller
 {
-
     /**
      * Display page
      *
@@ -31,5 +30,4 @@ class QueryRestController extends Controller
     {
         return view('query', ['show_cols' => 1]);
     }
-
 }

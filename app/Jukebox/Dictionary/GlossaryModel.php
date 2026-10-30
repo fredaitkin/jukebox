@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class GlossaryModel extends Model
 {
-
     protected $connection = 'mysql3';
 
     protected $table = 'wn_gloss';
@@ -31,5 +30,4 @@ class GlossaryModel extends Model
     {
         return $this->belongsTo(DictionaryModel::class);
     }
-
 }

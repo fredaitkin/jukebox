@@ -4,7 +4,6 @@ namespace App\Jukebox\Dictionary;
 
 interface DictionaryInterface
 {
-
     /**
      * Is this a word.
      *
@@ -28,5 +27,4 @@ interface DictionaryInterface
      * @return array
      */
     public function getDictionary($w);
-
 }

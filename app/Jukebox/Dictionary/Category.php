@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 class Category implements CategoryInterface
 {
-
     /**
      * Get categories
      *
@@ -42,5 +41,4 @@ class Category implements CategoryInterface
         $data = CategoryModel::select('id', 'category as text')->where('category', 'LIKE', '%' . $q . '%')->get();
         return response()->json($data);
     }
-
 }

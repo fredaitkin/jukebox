@@ -19,7 +19,6 @@ use Mail;
  */
 class Report extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -101,7 +100,6 @@ class Report extends Command
         if(empty($this->type) && empty($this->query)):
             $this->error('A report type or report query is required');
         endif;
-
     }
 
     /**
@@ -112,26 +110,26 @@ class Report extends Command
     protected function runReport()
     {
         try {
-
             switch($this->type):
-            case 'countries':
-                $query = 'SELECT country, COUNT(*) AS total FROM artists GROUP BY country ORDER BY total DESC, country ASC';
-                $records = DB::select($query);
-                $this->filename = 'artist_country.csv';
-                $this->report_title = "Report of Artists' Countries";
-                $this->createCSVReport($records, ['Country', 'Total']);
-                break;
-            case 'cities':
-                $query = "SELECT artist, country, notes FROM artists WHERE notes like '%Location%' ORDER BY country ASC, notes ASC, artist ASC";
-                $records = DB::select($query);
-                $this->filename = 'artist_city.csv';
-                $this->report_title = "Report of Artists' Cities";
-                $this->createCSVReport($records, ['Artist', 'Country', 'Location']);
-                break;
-            default:
-                $this->error('This report type does not exist.');
+                case 'countries':
+                    $query = 'SELECT country, COUNT(*) AS total FROM artists
+                        GROUP BY country ORDER BY total DESC, country ASC';
+                    $records = DB::select($query);
+                    $this->filename = 'artist_country.csv';
+                    $this->report_title = "Report of Artists' Countries";
+                    $this->createCSVReport($records, ['Country', 'Total']);
+                    break;
+                case 'cities':
+                    $query = "SELECT artist, country, notes FROM artists WHERE notes like '%Location%'
+                        ORDER BY country ASC, notes ASC, artist ASC";
+                    $records = DB::select($query);
+                    $this->filename = 'artist_city.csv';
+                    $this->report_title = "Report of Artists' Cities";
+                    $this->createCSVReport($records, ['Artist', 'Country', 'Location']);
+                    break;
+                default:
+                    $this->error('This report type does not exist.');
             endswitch;
-
         } catch (Exception $e) {
             $this->error("{{$e}}");
         }
@@ -145,13 +143,11 @@ class Report extends Command
     protected function runDynamicReport()
     {
         try {
-
             $records = DB::select($this->query);
             $now = date('YmdHi');
             $this->filename = 'report-' . $now . '.csv';
             $this->report_title = 'Dynamic Report - ' . $now;
             $this->createCSVReport($records);
-
         } catch (Exception $e) {
             $this->error("{{$e}}");
         }
@@ -168,7 +164,6 @@ class Report extends Command
     protected function createCSVReport(array $records, array $header = null)
     {
         if (isset($records[0])):
-
             $handle = fopen($this->filename, 'w');
 
             // Add  report title
@@ -191,11 +186,9 @@ class Report extends Command
 
             fclose($handle);
             $this->info('The report has been run successfully.');
-
         else:
             $this->error('No records were returned by this query');
         endif;
-
     }
 
     /**
@@ -207,12 +200,13 @@ class Report extends Command
     {
         $data = ['report' => $this->report_title];
         Mail::send(
-            'mail_report', $data, function ($message) {
+            'mail_report',
+            $data,
+            function ($message) {
                 $message->to(config('mail.report_email'), 'Report Email Address')->subject('MyMusic Report');
                 $message->attach(base_path() . DIRECTORY_SEPARATOR . $this->filename);
                 $message->from(config('mail.admin_email'), 'MyMusic');
             }
         );
     }
-
 }

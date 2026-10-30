@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
  */
 class QueryResourceController extends Controller
 {
-
     /**
      * Run query
      *
@@ -58,12 +57,12 @@ class QueryResourceController extends Controller
             }
         endif;
         return view(
-            'query', [
+            'query',
+            [
                 'myquery' => $request->myquery,
                 'results' => $results,
                 'show_cols' => $show_cols,
             ]
         );
     }
-
 }

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 interface ArtistInterface
 {
-
     /**
      * Retrieve an artist.
      *
@@ -85,5 +84,4 @@ interface ArtistInterface
     * @return array
     */
     public function getArtistAlbums($id);
-
 }

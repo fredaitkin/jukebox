@@ -20,7 +20,6 @@ use Illuminate\Http\Request;
  */
 class ArtistResourceController extends Controller
 {
-
     /**
      * The artist interface
      *
@@ -55,7 +54,8 @@ class ArtistResourceController extends Controller
     public function add()
     {
         return view(
-            'artist', [
+            'artist',
+            [
                 'title'     => 'Add New Artist',
                 'countries' => array_merge(['' => 'Please Select...'], config('countries')),
             ]
@@ -104,5 +104,4 @@ class ArtistResourceController extends Controller
     {
         return $this->artist->allByConstraints(['q' => $request->q]);
     }
-
 }

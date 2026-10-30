@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
  */
 class DictionaryResourceController extends Controller
 {
-
     /**
      * The dictionary interface
      *
@@ -46,5 +45,4 @@ class DictionaryResourceController extends Controller
     {
         return $this->dictionary->getDictionary($request->get('word'));
     }
-
 }

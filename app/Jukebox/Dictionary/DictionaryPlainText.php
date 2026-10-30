@@ -4,7 +4,6 @@ namespace App\Jukebox\Dictionary;
 
 class DictionaryPlainText
 {
-
     /**
      * Is this a word.
      *
@@ -35,5 +34,4 @@ class DictionaryPlainText
         $dictionary['glossary'] = $glossary;
         return $dictionary;
     }
-
 }

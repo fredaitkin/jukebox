@@ -6,19 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class PermissionModel extends Model
 {
-
     protected $table = 'permissions';
 
-    public function roles() {
+    public function roles()
+    {
 
-       return $this->belongsToMany(App\User\RoleModel::class,'roles_permissions');
-
+        return $this->belongsToMany(App\User\RoleModel::class, 'roles_permissions');
     }
 
-    public function users() {
+    public function users()
+    {
 
-       return $this->belongsToMany(App\User\UserModel::class,'users_permissions', 'user_id');
-
+        return $this->belongsToMany(App\User\UserModel::class, 'users_permissions', 'user_id');
     }
-
 }

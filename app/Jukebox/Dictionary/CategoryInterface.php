@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 interface CategoryInterface
 {
-
     /**
      * Retrieve categories
      *
@@ -22,5 +21,4 @@ interface CategoryInterface
      * @return mixed
      */
     public function allByConstraints(array $constraints);
-
 }

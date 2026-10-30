@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 
 class Playlist implements PlaylistInterface
 {
-
     /**
      * Retrieve a playlist.
      *
@@ -95,5 +94,4 @@ class Playlist implements PlaylistInterface
     {
         PlaylistModel::where(['name' => $name])->delete();
     }
-
 }

@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 namespace App\Jukebox\AudioFile;
 
 use DateTime;
 
-class MP4 implements AudioFileInterface {
-
-    const FILE_TYPE = 'mp4';
+class MP4 implements AudioFileInterface
+{
+    public const FILE_TYPE = 'mp4';
 
     /**
      * @var string
@@ -35,7 +35,7 @@ class MP4 implements AudioFileInterface {
      * @param array $file_info
      * @param string $file_type
      */
-    function __construct($location, $filename, $is_compilation, array $file_info, $file_type = null)
+    public function __construct($location, $filename, $is_compilation, array $file_info, $file_type = null)
     {
         $this->location = $location;
         $this->filename = $filename;
@@ -48,7 +48,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function title() {
+    public function title()
+    {
         $title = $this->file_info["quicktime"]["comments"]["title"][0] ?? '';
         return replaceSpecialFileSystemChars($title);
     }
@@ -58,7 +59,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function artist() {
+    public function artist()
+    {
         $artist = $this->file_info["quicktime"]["comments"]["artist"][0] ?? '';
         return replaceSpecialFileSystemChars($artist);
     }
@@ -70,7 +72,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return integer
      */
-    public function year() {
+    public function year()
+    {
         $date_str = $this->file_info["quicktime"]["comments"]["creation_date"][0] ?? '';
         if(empty($date_str)):
             $year = 9999;
@@ -90,7 +93,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function fileType() {
+    public function fileType()
+    {
         return self::FILE_TYPE;
     }
 
@@ -99,7 +103,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function album() {
+    public function album()
+    {
         $album = $this->file_info["quicktime"]["comments"]["album"][0] ?? 'Unknown Album';
         if (! empty($album)):
             $album = replaceSpecialFileSystemChars($album);
@@ -114,7 +119,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function trackNo() {
+    public function trackNo()
+    {
         return $this->file_info["quicktime"]["comments"]["track_number"][0] ?? '';
     }
 
@@ -123,7 +129,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function genre() {
+    public function genre()
+    {
         return $this->file_info["quicktime"]["comments"]["genre"][0] ?? '';
     }
 
@@ -132,7 +139,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return integer
      */
-    public function fileSize() {
+    public function fileSize()
+    {
         return $this->file_info["filesize"] ?? 0;
     }
 
@@ -141,17 +149,19 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function composer() {
-        return $this->file_info["quicktime"]["comments"]["composer"][0] ?? '';  
+    public function composer()
+    {
+        return $this->file_info["quicktime"]["comments"]["composer"][0] ?? '';
     }
-        
+
     /**
      * Require the playtime.
      *
      * @return string
      */
-    public function playtime() {
-        return $this->file_info["playtime_string"] ?? '';  
+    public function playtime()
+    {
+        return $this->file_info["playtime_string"] ?? '';
     }
 
     /**
@@ -159,7 +169,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function location() {
+    public function location()
+    {
         return $this->location;
     }
 
@@ -168,7 +179,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return string
      */
-    public function notes() {
+    public function notes()
+    {
         return '';
     }
 
@@ -177,8 +189,8 @@ class MP4 implements AudioFileInterface {
      *
      * @return bool
      */
-    public function isCompilation() {
+    public function isCompilation()
+    {
         return $this->is_compilation;
     }
-
 }

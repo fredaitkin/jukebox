@@ -6,6 +6,7 @@
  * @package Jukebox
  * @author  Fred Aitkin
  */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -28,7 +29,6 @@ use Storage;
  */
 class UtilitiesResourceController extends Controller
 {
-
     private $ID3_extractor;
 
     /**
@@ -67,7 +67,7 @@ class UtilitiesResourceController extends Controller
      */
     public function __construct(Artist $artist, Song $song)
     {
-        $this->ID3_extractor = new getID3;
+        $this->ID3_extractor = new getID3();
         $this->media_directory = config('filesystems.media_directory');
         $this->partition_root = config('filesystems.disks')[config('filesystems.partition')]['root'];
         $this->artist = $artist;
@@ -87,21 +87,24 @@ class UtilitiesResourceController extends Controller
             $this->count = 0;
             // Check media library has been set
             if(empty($this->media_directory)):
-                return view('utilities')->withErrors(["The media library needs to be set at <a href='/settings'>Settings</a>"]);
+                return view('utilities')
+                    ->withErrors(["The media library needs to be set at <a href='/settings'>Settings</a>"]);
             endif;
             // Check directories have been set
             if(empty($request->artist_directory) && empty($request->random_directory)):
                 return view('utilities')->withErrors(["Please choose a directory"]);
             endif;
             if(! empty($request->artist_directory)):
-                if(Storage::disk(config('filesystems.partition'))->has($this->media_directory . $request->artist_directory)):
+                if(
+                    Storage::disk(config('filesystems.partition'))
+                    ->has($this->media_directory . $request->artist_directory)
+                ):
                     if(isset($request->entire_library)):
                         $this->processMediaDirectory();
                     else:
                         $dirs = explode('\\', $request->artist_directory);
-                        $artist_id = $this->processArtist($dirs[count($dirs)-1]);
+                        $artist_id = $this->processArtist($dirs[count($dirs) - 1]);
                         $this->processArtistDirectory($request->artist_directory, $artist_id);
-
                     endif;
                 else:
                     return Redirect::route('utilities.utilities')
@@ -122,7 +125,6 @@ class UtilitiesResourceController extends Controller
                         ->withErrors(['The random directory not a valid directory']);
                 endif;
             endif;
-
         } catch (Exception $e) {
             return view('utilities')->withErrors([$e->getMessage()]);
         }
@@ -287,23 +289,32 @@ class UtilitiesResourceController extends Controller
             if(! Storage::disk(config('filesystems.partition'))->exists($this->media_directory . $song_info->artist())):
                 Log::info("Making artist directory");
                 // Create artist folder in media library.
-                Storage::disk(config('filesystems.partition'))->makeDirectory($this->media_directory . $song_info->artist());
+                Storage::disk(config('filesystems.partition'))
+                    ->makeDirectory($this->media_directory . $song_info->artist());
             endif;
 
             // Make album folder
-            if(! Storage::disk(config('filesystems.partition'))->exists($this->media_directory . $song_info->artist() . DIRECTORY_SEPARATOR . $song_info->album())):
+            if(
+                !Storage::disk(config('filesystems.partition'))
+                    ->exists($this->media_directory . $song_info->artist() . DIRECTORY_SEPARATOR . $song_info->album())
+            ):
                 Log::info("Making album directory " . $song_info->album());
                 // Create album folder under artist in media library.
-                Storage::disk(config('filesystems.partition'))->makeDirectory($this->media_directory . $song_info->artist() . DIRECTORY_SEPARATOR . $song_info->album());
+                Storage::disk(config('filesystems.partition'))
+                ->makeDirectory(
+                    $this->media_directory . $song_info->artist() . DIRECTORY_SEPARATOR . $song_info->album()
+                );
             endif;
 
             // Process song
             if(! $this->song->doesSongExist($artist_id, $song_info->title())):
                 Log::info("Adding and moving song " . $song_info->title());
-                $new_song_location = $song_info->artist() . "\\" . $song_info->album() . DIRECTORY_SEPARATOR . $song_info->title() . "." . $song_info->fileType();
+                $new_song_location = $song_info->artist() . "\\" . $song_info->album() . DIRECTORY_SEPARATOR .
+                    $song_info->title() . "." . $song_info->fileType();
                 // Create song in database
                 $this->song->dynamicStore($new_song_location, $song_info->album(), $artist_id, $song_info);
-                Storage::disk(config('filesystems.partition'))->move(str_replace($this->partition_root, '', $song), $this->media_directory . $new_song_location);
+                Storage::disk(config('filesystems.partition'))
+                    ->move(str_replace($this->partition_root, '', $song), $this->media_directory . $new_song_location);
             else:
                 // Song already exists, delete this one
                 Log::info("Deleting existing song");
@@ -336,17 +347,16 @@ class UtilitiesResourceController extends Controller
         endif;
 
         switch($file_info['fileformat']):
-        case "mp3":
-            $song = new MP3($path, $filename, $is_compilation, $file_info);
-            break;
-        case "mp4":
-            $song = new MP4($path, $filename, $is_compilation, $file_info);
-            break;
-        default:
-            $song = new AudioFile($path, $filename, $is_compilation, $file_info, $file_info['fileformat']);
-            break;
+            case "mp3":
+                $song = new MP3($path, $filename, $is_compilation, $file_info);
+                break;
+            case "mp4":
+                $song = new MP4($path, $filename, $is_compilation, $file_info);
+                break;
+            default:
+                $song = new AudioFile($path, $filename, $is_compilation, $file_info, $file_info['fileformat']);
+                break;
         endswitch;
         return $song;
     }
-
 }
