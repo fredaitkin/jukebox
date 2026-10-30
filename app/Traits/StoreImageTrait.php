@@ -1,12 +1,12 @@
 <?php
- 
+
 namespace App\Traits;
- 
+
 use Intervention\Image\ImageManagerStatic as Image;
 use Storage;
- 
-trait StoreImageTrait {
- 
+
+trait StoreImageTrait
+{
     /**
      * Saves an image to storage
      *
@@ -15,7 +15,8 @@ trait StoreImageTrait {
      * @param string $directory Directory to save the image to
      * @param array $resize Resize values for image
      */
-    public function storeImage( \Illuminate\Http\UploadedFile $image, $name, $directory, $resize = [] ) {
+    public function storeImage(\Illuminate\Http\UploadedFile $image, $name, $directory, $resize = [])
+    {
         $img = Image::make($image->getRealPath());
         if (! empty($resize)):
             $img->resize($resize[0], $resize[1], function ($constraint) {
@@ -25,5 +26,4 @@ trait StoreImageTrait {
         $img->stream();
         Storage::disk('public')->put($directory . $name, $img);
     }
- 
 }

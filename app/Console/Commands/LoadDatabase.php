@@ -52,7 +52,6 @@ class LoadDatabase extends Command
     public function handle()
     {
         try {
-
             // Retain song stats for the device.
             $stats = $this->song->allByConstraints([], ['id', 'played', 'last_played']);
 

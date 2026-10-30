@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
  */
 class PlaylistRestController extends Controller
 {
-
     /**
      * The playlist interface
      *
@@ -77,7 +76,8 @@ class PlaylistRestController extends Controller
     {
         $playlist = $this->playlist->allByConstraints(['playlist' => $name]);
         return view(
-            'playlist', [
+            'playlist',
+            [
                 'playlist' => $name,
                 'songs' => (array) json_decode($playlist[0]->playlist),
             ]
@@ -121,5 +121,4 @@ class PlaylistRestController extends Controller
         $this->playlist->delete($playlist);
         return view('playlists', ['playlists' => $this->playlist->all($request)]);
     }
-
 }

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 interface SongInterface
 {
-
     /**
      * Retrieve a song.
      *

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 interface WordCloudInterface
 {
-
     /**
      * Retrieve the word cloud.
      *
@@ -63,5 +62,4 @@ interface WordCloudInterface
      * @return void
      */
     public function processWord($word);
-
 }

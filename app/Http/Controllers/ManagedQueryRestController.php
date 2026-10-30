@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
  */
 class ManagedQueryRestController extends Controller
 {
-
     /**
      * Display managed query page.
      *
@@ -35,5 +34,4 @@ class ManagedQueryRestController extends Controller
         ];
         return view('managed_query', ['queries' => $queries]);
     }
-
 }

@@ -22,7 +22,6 @@ use URL;
  */
 class ArtistRestController extends Controller
 {
-
     use StoreImageTrait;
 
     /**
@@ -97,7 +96,7 @@ class ArtistRestController extends Controller
      * @param int $id Song id
      *
      * @return Response
-     */ 
+     */
     public function edit($id)
     {
         $artist = $this->artist->get($id ?? null);
@@ -111,12 +110,16 @@ class ArtistRestController extends Controller
             endif;
         endif;
         return view(
-            'artist', [
+            'artist',
+            [
                 'title'     => $artist->artist,
                 'artist'    => $artist,
                 'albums'    => $albums,
                 'songs'     => $this->song->getArtistSongs($id, $artist->artist),
-                'countries' => array_merge(['' => 'Please Select...'], config('countries')),
+                'countries' => array_merge(
+                    ['' => 'Please Select...'],
+                    config('countries'),
+                ),
             ]
         );
     }
@@ -133,5 +136,4 @@ class ArtistRestController extends Controller
     {
         $this->artist->destroy($id);
     }
-
 }

@@ -18,7 +18,6 @@ use Illuminate\Console\Command;
  */
 class LyricDataFix extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -136,5 +135,4 @@ class LyricDataFix extends Command
             endif;
         endif;
     }
-
 }

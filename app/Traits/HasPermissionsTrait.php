@@ -5,76 +5,81 @@ namespace App\Traits;
 use App\User\PermissionModel as Permission;
 use App\User\RoleModel as Role;
 
-trait HasPermissionsTrait {
+trait HasPermissionsTrait
+{
+    public function givePermissionsTo(...$permissions)
+    {
 
-   public function givePermissionsTo(... $permissions) {
+        $permissions = $this->getAllPermissions($permissions);
+        if($permissions === null):
+            return $this;
+        endif;
+        $this->permissions()->saveMany($permissions);
+        return $this;
+    }
 
-    $permissions = $this->getAllPermissions($permissions);
-    if($permissions === null):
-      return $this;
-    endif;
-    $this->permissions()->saveMany($permissions);
-    return $this;
-  }
+    public function withdrawPermissionsTo(...$permissions)
+    {
 
-  public function withdrawPermissionsTo( ... $permissions ) {
+        $permissions = $this->getAllPermissions($permissions);
+        $this->permissions()->detach($permissions);
+        return $this;
+    }
 
-    $permissions = $this->getAllPermissions($permissions);
-    $this->permissions()->detach($permissions);
-    return $this;
+    public function refreshPermissions(...$permissions)
+    {
 
-  }
+        $this->permissions()->detach();
+        return $this->givePermissionsTo($permissions);
+    }
 
-  public function refreshPermissions( ... $permissions ) {
+    public function hasPermissionTo($permission)
+    {
 
-    $this->permissions()->detach();
-    return $this->givePermissionsTo($permissions);
-  }
+        return $this->hasPermissionThroughRole($permission) || $this->hasPermission($permission);
+    }
 
-  public function hasPermissionTo($permission) {
+    public function hasPermissionThroughRole($permission)
+    {
 
-    return $this->hasPermissionThroughRole($permission) || $this->hasPermission($permission);
-  }
+        foreach ($permission->roles as $role):
+            if($this->roles->contains($role)):
+                return true;
+            endif;
+        endforeach;
+        return false;
+    }
 
-  public function hasPermissionThroughRole($permission) {
+    public function hasRole(...$roles)
+    {
 
-    foreach ($permission->roles as $role):
-      if($this->roles->contains($role)):
-        return true;
-      endif;
-    endforeach;
-    return false;
-  }
+        foreach ($roles as $role):
+            if ($this->roles->contains('slug', $role)):
+                return true;
+            endif;
+        endforeach;
+        return false;
+    }
 
-  public function hasRole( ... $roles ) {
+    public function roles()
+    {
 
-    foreach ($roles as $role):
-      if ($this->roles->contains('slug', $role)):
-        return true;
-      endif;
-    endforeach;
-    return false;
-  }
+        return $this->belongsToMany(Role::class, 'users_roles', 'user_id', 'role_id');
+    }
+    public function permissions()
+    {
 
-  public function roles() {
+        return $this->belongsToMany(Permission::class, 'users_permissions', 'user_id', 'permission_id');
+    }
+    protected function hasPermission($permission)
+    {
 
-    return $this->belongsToMany(Role::class,'users_roles', 'user_id', 'role_id');
+        return (bool) $this->permissions->where('slug', $permission->slug)->count();
+    }
 
-  }
-  public function permissions() {
+    protected function getAllPermissions(array $permissions)
+    {
 
-    return $this->belongsToMany(Permission::class,'users_permissions', 'user_id', 'permission_id');
-
-  }
-  protected function hasPermission($permission) {
-
-    return (bool) $this->permissions->where('slug', $permission->slug)->count();
-  }
-
-  protected function getAllPermissions(array $permissions) {
-
-    return PermissionModel::whereIn('slug',$permissions)->get();
-    
-  }
-
+        return PermissionModel::whereIn('slug', $permissions)->get();
+    }
 }

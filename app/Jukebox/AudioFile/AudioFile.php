@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace App\Jukebox\AudioFile;
 
-class AudioFile implements AudioFileInterface {
-
+class AudioFile implements AudioFileInterface
+{
     /**
      * @var string
      */
@@ -36,7 +36,7 @@ class AudioFile implements AudioFileInterface {
      * @param array $file_info
      * @param string $file_type
      */
-    function __construct($location, $filename, $is_compilation, array $file_info, $file_type = null)
+    public function __construct($location, $filename, $is_compilation, array $file_info, $file_type = null)
     {
         $this->location = $location;
         $this->filename = $filename;
@@ -50,11 +50,12 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function title() {
+    public function title()
+    {
         $title = '';
         $idx = strrpos($this->filename, '.');
-        if ( $idx !== false ):
-            $title = substr($this->filename, 0, $idx );
+        if ($idx !== false):
+            $title = substr($this->filename, 0, $idx);
         endif;
         return $title;
     }
@@ -64,7 +65,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return integer
      */
-    public function year() {
+    public function year()
+    {
         return 9999;
     }
 
@@ -73,7 +75,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function fileType() {
+    public function fileType()
+    {
         return $this->file_type;
     }
 
@@ -82,7 +85,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function artist() {
+    public function artist()
+    {
         return '';
     }
 
@@ -91,7 +95,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function album() {
+    public function album()
+    {
         return '';
     }
 
@@ -100,7 +105,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function trackNo() {
+    public function trackNo()
+    {
         return '';
     }
 
@@ -109,7 +115,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function genre() {
+    public function genre()
+    {
         return '';
     }
 
@@ -118,7 +125,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return integer
      */
-    public function fileSize() {
+    public function fileSize()
+    {
         return $this->file_info['filesize'] ?? 0;
     }
 
@@ -127,17 +135,19 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function composer() {
+    public function composer()
+    {
         return '';
     }
-        
+
     /**
      * Return playtime.
      *
      * @return string
      */
-    public function playtime() {
-        return $this->file_info['playtime_string'] ?? '';  
+    public function playtime()
+    {
+        return $this->file_info['playtime_string'] ?? '';
     }
 
     /**
@@ -145,7 +155,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function location() {
+    public function location()
+    {
         return $this->location;
     }
 
@@ -154,7 +165,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return string
      */
-    public function notes() {
+    public function notes()
+    {
         return '';
     }
 
@@ -163,8 +175,8 @@ class AudioFile implements AudioFileInterface {
      *
      * @return bool
      */
-    public function isCompilation() {
+    public function isCompilation()
+    {
         return $this->is_compilation;
     }
-
 }

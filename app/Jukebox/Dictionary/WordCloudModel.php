@@ -7,7 +7,6 @@ use Kyslik\ColumnSortable\Sortable;
 
 class WordCloudModel extends Model
 {
-
     use Sortable;
 
     /**
@@ -95,7 +94,12 @@ class WordCloudModel extends Model
     public function categories()
     {
         // Specify table name as it does not follow the default laravel naming convention
-        return $this->belongsToMany('App\Jukebox\Dictionary\CategoryModel', 'word_category', 'word_cloud_id', 'category_id');
+        return $this->belongsToMany(
+            'App\Jukebox\Dictionary\CategoryModel',
+            'word_category',
+            'word_cloud_id',
+            'category_id'
+        );
     }
 
     /**
@@ -130,5 +134,4 @@ class WordCloudModel extends Model
     {
         return $this->belongsToMany('App\Jukebox\Song\SongModel', 'song_word_cloud', 'word_cloud_id', 'song_id');
     }
-
 }

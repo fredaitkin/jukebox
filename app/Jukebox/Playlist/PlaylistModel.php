@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlaylistModel extends Model
 {
-
     protected $table = 'playlists';
 
     /**
@@ -44,5 +43,4 @@ class PlaylistModel extends Model
      * @var array
      */
     protected $guarded = [];
-
 }

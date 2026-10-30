@@ -3,12 +3,10 @@
 namespace App\Jukebox\Song;
 
 use Illuminate\Http\Request;
-
 use DB;
 
 class Song implements SongInterface
 {
-
     /** Basic Routines */
 
     /**
@@ -60,7 +58,7 @@ class Song implements SongInterface
         if (isset($constraints['artist'])):
             $artist = $constraints['artist'];
             $exact_match = $constraints['exact_match'];
-            $query->whereHas('artists', function($q) use($artist, $exact_match) {
+            $query->whereHas('artists', function ($q) use ($artist, $exact_match) {
                 if ($exact_match == 'true'):
                     $q->where('artist', $artist);
                 else:
@@ -176,9 +174,10 @@ class Song implements SongInterface
     *
     * @param string $query
     */
-    public function search($query) {
+    public function search($query)
+    {
         return SongModel::select('songs.*')
-            ->whereHas('artists', function($q) use($query) {
+            ->whereHas('artists', function ($q) use ($query) {
                 $q->where('artist', 'LIKE', '%' . $query . '%');
             })
             ->orWhere('title', 'LIKE', '%' . $query . '%')
@@ -231,7 +230,7 @@ class Song implements SongInterface
     public function doesAlbumExist($id, $album_name)
     {
         $song = SongModel::where('album', $album_name)
-            ->with(['artists' => function($q) use ($id) {
+            ->with(['artists' => function ($q) use ($id) {
                 $q->where('artist_id', '=', $id);
             }],)
             ->first();
@@ -264,8 +263,9 @@ class Song implements SongInterface
     *
     * @param string $file
     */
-    public function isSong($file) {
-        $extension = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+    public function isSong($file)
+    {
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         return in_array($extension, config('audio_file_formats'));
     }
 
@@ -279,9 +279,10 @@ class Song implements SongInterface
     * @param int $id
     * @param string $artist
     */
-    public function getArtistSongs($id, $artist) {
+    public function getArtistSongs($id, $artist)
+    {
         return SongModel::select('id', 'title')
-            ->whereHas('artists', function($q) use ($id) {
+            ->whereHas('artists', function ($q) use ($id) {
                 $q->where('artist_id', '=', $id);
             })
             ->orWhere(["notes" => $artist])
@@ -338,7 +339,11 @@ class Song implements SongInterface
                 23, 84, 197, 209, 280, 469, 510, 611, 763, 802, 821, 838, 841, 846, 1453, 1516,
             ])
             ->whereNotIn('album', [
-                'Turkish Groove', 'African Women', 'Bocelli Greatest Hits', 'Buena Vista Social Club', 'Everything Is Possible!',
+                'Turkish Groove',
+                'African Women',
+                'Bocelli Greatest Hits',
+                'Buena Vista Social Club',
+                'Everything Is Possible!',
                 "Edith Piaf - 20 'French' Hit Singles",
             ])
             ->whereNotIn('lyrics', ['unavailable', 'Instrumental', 'inapplicable']);
@@ -369,5 +374,4 @@ class Song implements SongInterface
         // Reset index to 0.
         return $songs->values();
     }
-
 }

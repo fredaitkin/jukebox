@@ -52,6 +52,5 @@ class AppServiceProvider extends ServiceProvider
             'App\Jukebox\Dictionary\DictionaryInterface',
             'App\Jukebox\Dictionary\Dictionary',
         );
-
     }
 }

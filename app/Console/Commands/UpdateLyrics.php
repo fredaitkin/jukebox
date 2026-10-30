@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Http;
  */
 class UpdateLyrics extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -85,7 +84,6 @@ class UpdateLyrics extends Command
             $this->error('Song ID is required');
             exit;
         endif;
-
     }
 
     /**
@@ -106,7 +104,6 @@ class UpdateLyrics extends Command
         $song = $this->song->get($id);
 
         if (isset($song->id)):
-
             $artist = $song->artists[0]->artist;
             if (isset($artists_names[$artist])):
                 $artist = $artists_names[$artist];
@@ -137,17 +134,13 @@ class UpdateLyrics extends Command
                         $this->info("Ignoring");
                     endif;
                 endif;
-
             } catch (Exception $e) {
-
                 $this->error($song->title . ' ' . $artist);
                 $this->error($e->getMessage());
             }
 
              $this->info("ID: " . $song->id);
-
         endif;
-
     }
 
     /**
@@ -162,7 +155,9 @@ class UpdateLyrics extends Command
     {
         $this->info("Direct Search");
 
-        $response = Http::get($this->url . "SearchLyricDirect?artist=" . urlencode($artist) . "&song=" . urlencode($song));
+        $response = Http::get(
+            $this->url . "SearchLyricDirect?artist=" . urlencode($artist) . "&song=" . urlencode($song)
+        );
         $this->info($this->url . "SearchLyricDirect?artist=" . urlencode($artist) . "&song=" . urlencode($song));
         $xml = simplexml_load_string($response);
 
@@ -173,7 +168,10 @@ class UpdateLyrics extends Command
         if (isset($xml) && ! empty($xml->Lyric)):
             $this->info("LYRIC ARTIST: " . $xml->LyricArtist);
             $this->info("LYRIC SONG: " . $xml->LyricSong);
-            if (strcasecmp($artist, (string) $xml->LyricArtist) === 0 && strcasecmp($song, (string) $xml->LyricSong) === 0):
+            if (
+                strcasecmp($artist, (string) $xml->LyricArtist) === 0
+                && strcasecmp($song, (string) $xml->LyricSong) === 0
+            ):
                 return (string) $xml->Lyric;
             endif;
         endif;
@@ -239,5 +237,4 @@ class UpdateLyrics extends Command
 
         return false;
     }
-
 }

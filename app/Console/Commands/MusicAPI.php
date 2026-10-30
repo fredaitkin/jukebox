@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Http;
  */
 class MusicAPI extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -135,7 +134,10 @@ class MusicAPI extends Command
                     $track_info = $this->track($track->id);
                     if ($track_info):
                         if (isset($track_info->release_date) && isset($track_info->album->release_date)):
-                            if (strlen($track_info->release_date) == 10 && strlen($track_info->album->release_date) == 10):
+                            if (
+                                strlen($track_info->release_date) == 10
+                                && strlen($track_info->album->release_date) == 10
+                            ):
                                 $year = substr($track_info->release_date, 0, 4);
                                 $album_year = substr($track_info->album->release_date, 0, 4);
                                 $diff = abs($year - $album_year);
@@ -159,7 +161,6 @@ class MusicAPI extends Command
                 $this->error($e->getMessage());
             }
         endforeach;
-
     }
 
     /**
@@ -260,7 +261,8 @@ class MusicAPI extends Command
     private function artistNotFound($artist)
     {
         return (in_array(
-            $artist, [
+            $artist,
+            [
             'Compilations',
             'G.I.T',
             'Gabriel Meyers',
@@ -352,5 +354,4 @@ class MusicAPI extends Command
     {
         return $this->getRequest('https://' . $this->deezer_host . '/artist/' . $id);
     }
-
 }

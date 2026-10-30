@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
  */
 class WordCloudResourceController extends Controller
 {
-
     /**
      * The wordcloude interface
      *
@@ -54,5 +53,4 @@ class WordCloudResourceController extends Controller
         endforeach;
         return response()->json($data);
     }
-
 }

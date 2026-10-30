@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace App\Jukebox\AudioFile;
 
-class MP3 implements AudioFileInterface {
-
-    const FILE_TYPE = 'mp3';
+class MP3 implements AudioFileInterface
+{
+    public const FILE_TYPE = 'mp3';
 
     /**
      * @var string
@@ -32,7 +32,7 @@ class MP3 implements AudioFileInterface {
      * @param bool $is_compilation
      * @param array $file_info
      */
-    function __construct($location, $filename, $is_compilation, array $file_info)
+    public function __construct($location, $filename, $is_compilation, array $file_info)
     {
         $this->location = $location;
         $this->filename = $filename;
@@ -45,7 +45,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function title() {
+    public function title()
+    {
         $title = $this->file_info["tags"]["id3v2"]["title"][0] ?? '';
         return replaceSpecialFileSystemChars($title);
     }
@@ -56,7 +57,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function artist() {
+    public function artist()
+    {
         $artist = $this->file_info["tags"]["id3v2"]["artist"][0] ?? '';
         return replaceSpecialFileSystemChars($artist);
     }
@@ -66,7 +68,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return integer
      */
-    public function year() {
+    public function year()
+    {
         return $this->file_info["tags"]["id3v2"]["year"][0] ?? 9999;
     }
 
@@ -75,7 +78,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function fileType() {
+    public function fileType()
+    {
         return self::FILE_TYPE;
     }
 
@@ -85,7 +89,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function album() {
+    public function album()
+    {
         $album = $this->file_info["tags"]["id3v2"]["album"][0] ?? 'Unknown Album';
         if(! empty($album)):
             $album = replaceSpecialFileSystemChars($album);
@@ -100,7 +105,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function trackNo() {
+    public function trackNo()
+    {
         return $this->file_info["tags"]["id3v2"]["track_number"][0] ?? '';
     }
 
@@ -109,7 +115,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function genre() {
+    public function genre()
+    {
         return $this->file_info["tags"]["id3v2"]["genre"][0] ?? '';
     }
 
@@ -118,7 +125,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return integer
      */
-    public function fileSize() {
+    public function fileSize()
+    {
         return $this->file_info["filesize"] ?? 0;
     }
 
@@ -127,17 +135,19 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function composer() {
+    public function composer()
+    {
         return '';
     }
-        
+
     /**
      * Return the playtime.
      *
      * @return string
      */
-    public function playtime() {
-        return $this->file_info["playtime_string"] ?? '';  
+    public function playtime()
+    {
+        return $this->file_info["playtime_string"] ?? '';
     }
 
     /**
@@ -145,7 +155,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function location() {
+    public function location()
+    {
         return $this->location;
     }
 
@@ -154,10 +165,11 @@ class MP3 implements AudioFileInterface {
      *
      * @return string
      */
-    public function notes() {
+    public function notes()
+    {
         $notes = '';
         if($this->is_compilation):
-           $notes = $this->file_info["tags"]["id3v2"]["artist"][0];
+            $notes = $this->file_info["tags"]["id3v2"]["artist"][0];
         endif;
         return $notes;
     }
@@ -167,8 +179,8 @@ class MP3 implements AudioFileInterface {
      *
      * @return bool
      */
-    public function isCompilation() {
+    public function isCompilation()
+    {
         return $this->is_compilation;
     }
-
 }

@@ -21,7 +21,6 @@ use Storage;
  */
 class SongRestController extends Controller
 {
-
     /**
      * The song interface
      *
@@ -122,15 +121,16 @@ class SongRestController extends Controller
             $cover_art = '/image/cover/' . $song->id;
         endif;
         return view(
-            'song', [
+            'song',
+            [
             'song'          => $song,
             'title'         => $song->title,
             'cover_art'     => $cover_art,
             'artists'       => json_encode($song->artists),
             'file_types'    => config('audio_file_formats'),
-            'song_exists'   => Storage::disk(config('filesystems.partition'))->has(config('filesystems.media_directory') . $song->location),
+            'song_exists'   => Storage::disk(config('filesystems.partition'))
+                ->has(config('filesystems.media_directory') . $song->location),
             ]
         );
     }
-
 }

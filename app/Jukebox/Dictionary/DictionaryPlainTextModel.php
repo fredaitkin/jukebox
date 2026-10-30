@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Jukebox\Dictionary;
-
 /**
  * DictionaryPlainTextModel is a simple class that sits on a open source dictionary.
- * 
+ *
  * The MySQL English Dictionary A dictionary with 176023 entries.
  * See https://sourceforge.net/projects/mysqlenglishdictionary/
- * 
+ *
  * Text was extracted from the files at http://www.mso.anu.edu.au/~ralph/OPTED/
- * and then parsed and stored in a 16MB MySQL database. 
+ * and then parsed and stored in a 16MB MySQL database.
  **/
+
+namespace App\Jukebox\Dictionary;
 
 use Illuminate\Database\Eloquent\Model;
 
 class DictionaryPlainTextModel extends Model
 {
-
     protected $connection = 'mysql2';
 
     protected $table = 'entries';
@@ -37,7 +36,7 @@ class DictionaryPlainTextModel extends Model
 
     /**
      * The word definition
-     * 
+     *
      * @var string
      */
     protected $definition;
@@ -53,5 +52,4 @@ class DictionaryPlainTextModel extends Model
         endforeach;
         return $glossary;
     }
-
 }

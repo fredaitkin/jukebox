@@ -4,7 +4,6 @@ namespace App\Jukebox\Dictionary;
 
 class Dictionary implements DictionaryInterface
 {
-
     /**
      * Get the word.
      *
@@ -29,7 +28,7 @@ class Dictionary implements DictionaryInterface
         if ($word):
             return true;
         else:
-            $word = new DictionaryModel;
+            $word = new DictionaryModel();
             $word->word = $w;
             return count($word->companion) > 0;
         endif;
@@ -54,7 +53,7 @@ class Dictionary implements DictionaryInterface
 
         // Retrieve companion dictionary
         if (empty($word)):
-            $word = new DictionaryModel;
+            $word = new DictionaryModel();
             $word->word = $w;
         endif;
 

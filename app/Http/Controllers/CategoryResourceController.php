@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
  */
 class CategoryResourceController extends Controller
 {
-
     /**
      * The Category interface
      *
@@ -46,5 +45,4 @@ class CategoryResourceController extends Controller
     {
         return $this->category->allByConstraints(['q' => $request->q]);
     }
-
 }

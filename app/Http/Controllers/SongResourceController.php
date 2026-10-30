@@ -20,7 +20,6 @@ use Storage;
  */
 class SongResourceController extends Controller
 {
-
     /**
      * The song interface
      *
@@ -46,7 +45,8 @@ class SongResourceController extends Controller
     public function add()
     {
         return view(
-            'song', [
+            'song',
+            [
                 'title'         => 'Add New Song',
                 'file_types'    => array_merge(['' => 'Please Select...'], config('audio_file_formats')),
                 'song_exists'   => false,
@@ -69,7 +69,7 @@ class SongResourceController extends Controller
         if ($q != ""):
             session()->put('songs_query', $q);
         endif;
-        
+
         $data = $this->song->search(session()->get('songs_query'));
         if ($data):
             // Data object can be a null, a view or a paginator
@@ -79,7 +79,8 @@ class SongResourceController extends Controller
                 if ($data->total() > 0):
                     return view('songs', ['q' => $q, 'songs' => $data]);
                 else:
-                    return view('songs', ['q' => $q, 'songs' => $data])->withMessage('No songs found. Try to search again!');
+                    return view('songs', ['q' => $q, 'songs' => $data])
+                        ->withMessage('No songs found. Try to search again!');
                 endif;
             endif;
         else:
@@ -114,5 +115,4 @@ class SongResourceController extends Controller
         endif;
         return false;
     }
-
 }

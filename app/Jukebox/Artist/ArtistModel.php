@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArtistModel extends Model
 {
-
     protected $table = 'artists';
 
     /**
@@ -94,7 +93,8 @@ class ArtistModel extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function compilation_songs() {
+    public function compilationSongs()
+    {
         return $this->hasMany('App\Jukebox\Song\SongModel', 'notes', 'artist');
     }
 
@@ -103,10 +103,10 @@ class ArtistModel extends Model
      *
      * @return array
      */
-    public function getAllSongsAttribute() {
+    public function getAllSongsAttribute()
+    {
         // @todo find a way using eloquent to retrieve compilation songs.
         return $this->songs;
-        // return $this->songs->merge($this->compilation_songs);
+        // return $this->songs->merge($this->compilationSongs);
     }
-
 }

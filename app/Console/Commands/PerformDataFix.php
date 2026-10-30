@@ -125,8 +125,12 @@ class PerformDataFix extends Command
     private function reportMissingSongs()
     {
         foreach ($this->song->allByConstraints() as $song):
-            if (! Storage::disk(config('filesystems.partition'))->has(config('filesystems.media_directory') . $song->location)):
-                $this->info($song->artists[0]->artist . ' ' . $song->title . ' LOCATION: ' . $song->location . ' does not exist');
+            if (
+                ! Storage::disk(config('filesystems.partition'))
+                ->has(config('filesystems.media_directory') . $song->location)
+            ):
+                $this->info($song->artists[0]->artist . ' ' . $song->title . ' LOCATION: ' .
+                    $song->location . ' does not exist');
             endif;
         endforeach;
     }
@@ -159,7 +163,10 @@ class PerformDataFix extends Command
         // Insert category id into pivot table
         $wordCloud = $this->wordCloud->allByConstraints();
         foreach ($wordCloud as $word):
-            DB::table('word_category')->insert(['word_cloud_id' => $word->id, 'category_id' => $categories[$word->category]]);
+            DB::table('word_category')->insert([
+                'word_cloud_id' => $word->id,
+                'category_id' => $categories[$word->category],
+                ]);
         endforeach;
     }
 
@@ -237,7 +244,6 @@ class PerformDataFix extends Command
     protected function createCSVReport(array $records, array $header = null)
     {
         if (isset($records[0])):
-
             $handle = fopen($this->filename, 'w');
 
             // Add  report title
@@ -260,11 +266,9 @@ class PerformDataFix extends Command
 
             fclose($handle);
             $this->info('The report has been run successfully.');
-
         else:
             $this->error('No records were returned by this query');
         endif;
-
     }
 
     /**
@@ -276,7 +280,9 @@ class PerformDataFix extends Command
     {
         $data = ['report' => $this->report_title];
         Mail::send(
-            'mail_report', $data, function ($message) {
+            'mail_report',
+            $data,
+            function ($message) {
                 $message->to(config('mail.report_email'), 'Report Email Address')->subject('MyMusic Report');
                 $message->attach(base_path() . DIRECTORY_SEPARATOR . $this->filename);
                 $message->from(config('mail.admin_email'), 'MyMusic');
@@ -301,7 +307,8 @@ class PerformDataFix extends Command
                         $cover_art['api'] = $amazon_storage . $cover_art['api'];
                     endif;
                     if (strpos($cover_art['api'], 'images-eu.amazon.com') !== false):
-                        $cover_art['api'] = str_replace('images-eu.amazon.com', 'ec1.images-amazon.com', $cover_art['api']);
+                        $cover_art['api'] =
+                            str_replace('images-eu.amazon.com', 'ec1.images-amazon.com', $cover_art['api']);
                     endif;
                     $response = Http::get($cover_art['api']);
                     if ($response->status() > 403):

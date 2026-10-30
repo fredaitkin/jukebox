@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Storage;
  */
 class ImageResourceController extends Controller
 {
-
     /**
      * The song interface
      *

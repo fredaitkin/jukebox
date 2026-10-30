@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace App\Jukebox\AudioFile;
 
-interface AudioFileInterface {
-
+interface AudioFileInterface
+{
     /**
      * Require the title method is implemented.
      *
@@ -66,7 +66,7 @@ interface AudioFileInterface {
      * @return string
      */
     public function composer();
-        
+
     /**
      * Require the playtime method is implemented.
      *
@@ -94,5 +94,4 @@ interface AudioFileInterface {
      * @return bool
      */
     public function isCompilation();
-
 }

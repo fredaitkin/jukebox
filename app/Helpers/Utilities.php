@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Http;
 
-function getCountryNames() 
+function getCountryNames()
 {
     if (! Cache::store('redis')->has('country_names')):
         $response = Http::get("https://restcountries.eu/rest/v2/all");
@@ -33,7 +33,8 @@ function getCountryNames()
 /**
  * Replaces characters file systems cannot process
  */
-function replaceSpecialFileSystemChars(String $s) {
+function replaceSpecialFileSystemChars(string $s)
+{
     $s = str_replace(
         [":", "/", ";", "?", "[", "]", '"'],
         [" - ", "-", " ", "", "(", ")", "'"],
@@ -50,12 +51,15 @@ function replaceSpecialFileSystemChars(String $s) {
  *
  * @param String $query SQL query
  */
-function isValidReadQuery(String $query) {
-    if (stripos($query, 'DELETE') !== false
-        || stripos( $query, 'UPDATE') !== false
-        || stripos( $query, 'INSERT') !== false
-        || stripos( $query, 'ALTER') !== false
-        || stripos( $query, 'DROP') !== false) {
+function isValidReadQuery(string $query)
+{
+    if (
+        stripos($query, 'DELETE') !== false
+        || stripos($query, 'UPDATE') !== false
+        || stripos($query, 'INSERT') !== false
+        || stripos($query, 'ALTER') !== false
+        || stripos($query, 'DROP') !== false
+    ) {
         return false;
     }
     return true;

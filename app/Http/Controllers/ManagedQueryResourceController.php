@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
  */
 class ManagedQueryResourceController extends Controller
 {
-
     /**
      * The song interface
      *
@@ -57,7 +56,8 @@ class ManagedQueryResourceController extends Controller
             endswitch;
         endif;
         return view(
-            'managed_query', [
+            'managed_query',
+            [
                 'predefined_query' => $request->predefined_query,
                 'params' => $request->params,
                 'queries' => $queries,
@@ -95,9 +95,12 @@ class ManagedQueryResourceController extends Controller
             $end_pos = strrpos($phrase, " ");
             $phrase = substr($phrase, 0, $end_pos);
             $phrase = str_replace($words, "<strong class='peru'>" . $words . "</strong>", $phrase);
-            $results['rows'][] = [$song->id, strlen($song->title) < 25 ? $song->title : str_pad(substr($song->title, 0, 25), 30, "."), trim($phrase)];
+            $results['rows'][] = [
+                $song->id,
+                strlen($song->title) < 25 ? $song->title : str_pad(substr($song->title, 0, 25), 30, "."),
+                trim($phrase)
+            ];
         endforeach;
         return $results;
     }
-
 }
