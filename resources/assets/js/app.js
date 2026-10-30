@@ -5,7 +5,5 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
-
-window.Jquery = require('jquery');
+import './bootstrap.js';
 import 'jquery-ui/ui/widgets/dialog.js';

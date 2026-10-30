@@ -18,6 +18,7 @@ export default [
       // 3. Define global variables to prevent "no-undef" errors
       globals: {
         ...globals.browser, // Includes window, document, etc.
+        ...globals.commonjs, // Includes require and module
         ...globals.jquery,  // Specifically defines $ and jQuery
         display_jukebox: "readonly",
         shuffle: "readonly",
@@ -42,6 +43,6 @@ export default [
   
   // 6. Ignore third-party libraries or build folders
   {
-    ignores: ["dist/", "vendor/", "node_modules/"],
+    ignores: ["dist/", "vendor/", "node_modules/", "public/js/app.js"],
   },
 ];
